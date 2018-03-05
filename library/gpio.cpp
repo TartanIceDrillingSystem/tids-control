@@ -25,7 +25,7 @@
 #include <pthread.h>
 #include <sstream>
 #include <string>
-//#include <sys/epoll.h>
+#include <sys/epoll.h>
 
 #include <unistd.h>
 

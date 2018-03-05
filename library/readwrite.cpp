@@ -37,7 +37,7 @@ string read(string filepath, string filename) {
 }
 
 int write(string filepath, string filename, string value) {
-    ofstream writestream;
+    ofstream writeStream;
     writeStream.open((filepath + filename).c_str());
     if (!writeStream.is_open()) {
        perror("READWRITE: Write failed to open file.");

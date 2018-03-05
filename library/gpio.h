@@ -24,8 +24,6 @@
 using std::ofstream;
 using std::string;
 
-#define GPIO_PATH "/sys/class/gpio/"
-
 namespace tids {
 
 typedef int (*CallbackFunction_t)(int);
@@ -41,43 +39,49 @@ private:
     string path;
     string name;
     int debounce;
-    CallbackFunction_t callbackFunction;
+    CallbackFunction_t threadCallbackFunction;
     pthread_t thread;
     bool threadRunning;
     ofstream stream;
 
 public:
-    GPIO(int pin, GPIO::VALUE activeState=HIGH);
+    GPIO(int pin, GPIO::DIRECTION direction, GPIO::VALUE activeState=HIGH);
     virtual ~GPIO();
 
     // Getters and setters
-    virtual int pin() { return pin; }
-    virtual string path() { return path; }
-    virtual string name() { return name; }
     
-    virtual int debounce() { return debounce; }
-    virtual int setDebounce(int debounce) { this->debounce = debounce; }
+    virtual int getPin() { return pin; }
+    virtual string getPath() { return path; }
+    virtual string getName() { return name; }
+    
+    // Minumim delay between GPIO reads, in milliseconds
+    virtual int getDebounce() { return debounce; }
+    virtual int setDebounce(int debounce) { this->debounce = debounce; return 0; }
 
-    virtual GPIO::DIRECTION direction();
+    virtual GPIO::DIRECTION getDirection();
     virtual int setDirection(GPIO::DIRECTION direction);
 
-    virtual GPIO::VALUE activeState();
-    virtual int setActiveState(GPIO::VALUE value);
+    virtual GPIO::VALUE getActiveState();
+    virtual int setActiveState(GPIO::VALUE activeState);
 
     // General input
-    virtual GPIO::VALUE value();
+    
+    virtual GPIO::VALUE getValue();
 
     // General output
+    
     virtual int setValue(GPIO::VALUE value);
 
     // Edge input
-    virtual GPIO::EDGE edgeType();
+    
+    virtual GPIO::EDGE getEdgeType();
     virtual int setEdgeType(GPIO::EDGE edgeType);
     virtual int waitForEdge();
     virtual int waitForEdgeThread(CallbackFunction_t callbackFunction);
-    virtual int waitForEdgeThreadCancel() { this->threadRunning = false; }
+    virtual int stopWaitForEdgeThread() { this->threadRunning = false; return 0; }
 
     // Stream output
+    
     virtual int streamOpen();
     virtual int streamSetValue(GPIO::VALUE value);
     virtual int streamClose();

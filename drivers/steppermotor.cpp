@@ -25,8 +25,8 @@ using namespace std;
 namespace tids {
 
 StepperMotor::StepperMotor(int pin_PLS, int pin_DIR, int pin_AWO, int pin_CS,
-                           int pin_ALM, int pin_TIM, int revolutionsPerMinute,
-                           int stepsPerRevolution) {
+                           int pin_ALM, int pin_TIM, int stepsPerRevolution,
+                           int revolutionsPerMinute) {
 
     this->gpio_PLS = new GPIO(pin_PLS, GPIO::OUTPUT);
     this->gpio_DIR = new GPIO(pin_DIR, GPIO::OUTPUT);
@@ -36,8 +36,8 @@ StepperMotor::StepperMotor(int pin_PLS, int pin_DIR, int pin_AWO, int pin_CS,
     this->gpio_TIM = new GPIO(pin_TIM, GPIO::INPUT);
 
     // Set delay
-    this->revolutionsPerMinute = revolutionsPerMinute;
     this->stepsPerRevolution = stepsPerRevolution;
+    this->revolutionsPerMinute = revolutionsPerMinute;
     this->updateStepDelay();
 
     // Default direction to clockwise
@@ -68,13 +68,13 @@ int StepperMotor::setDirection(StepperMotor::DIRECTION direction) {
     return 0;
 }
 
-int StepperMotor::setRevolutionsPerMinute(float revolutionsPerMinute) {
-    this->revolutionsPerMinute = revolutionsPerMinute;
+int StepperMotor::setStepsPerRevolution(int stepsPerRevolution) {
+    this->stepsPerRevolution = stepsPerRevolution;
     return this->updateStepDelay();
 }
 
-int StepperMotor::setStepsPerRevolution(int stepsPerRevolution) {
-    this->stepsPerRevolution = stepsPerRevolution;
+int StepperMotor::setRevolutionsPerMinute(float revolutionsPerMinute) {
+    this->revolutionsPerMinute = revolutionsPerMinute;
     return this->updateStepDelay();
 }
 

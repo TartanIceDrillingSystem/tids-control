@@ -42,8 +42,8 @@ private:
     GPIO *gpio_TIM;
 
     DIRECTION direction;
-    float revolutionsPerMinute;
     int stepsPerRevolution;
+    float revolutionsPerMinute;
     bool sleeping;
     // Delay between steps, in microseconds
     int stepDelay;
@@ -55,8 +55,8 @@ private:
 
 public:
     StepperMotor(int pin_PLS, int pin_DIR, int pin_AWO, int pin_CS,
-                 int pin_ALM, int pin_TIM, int revolutionsPerMinute = 60,
-                 int stepsPerRevolution = 1000);
+                 int pin_ALM, int pin_TIM, int stepsPerRevolution = 1000,
+                 int revolutionsPerMinute = 60);
     virtual ~StepperMotor();
     
     // Getters and setters
@@ -64,11 +64,11 @@ public:
     virtual DIRECTION getDirection() { return this->direction; }
     virtual int setDirection(DIRECTION direction);
 
-    virtual float getRevolutionsPerMinute() { return this->revolutionsPerMinute; }
-    virtual int setRevolutionsPerMinute(float revolutionsPerMinute);
-    
     virtual int getStepsPerRevolution() { return this->stepsPerRevolution; }
     virtual int setStepsPerRevolution(int stepsPerRevolution);
+
+    virtual float getRevolutionsPerMinute() { return this->revolutionsPerMinute; }
+    virtual int setRevolutionsPerMinute(float revolutionsPerMinute);
     
     virtual bool getSleeping() { return this->sleeping; }
     virtual int setSleeping(bool sleeping);

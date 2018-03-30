@@ -162,7 +162,7 @@ int GPIO::setEdgeType(GPIO::EDGE edgeType) {
 
 int GPIO::waitForEdge() {
     // Check if direction is input
-    if (this->direction() != INPUT) {
+    if (this->getDirection() != INPUT) {
         perror("GPIO: Edge pin must be input.");
         return -1;
     }
@@ -175,7 +175,7 @@ int GPIO::waitForEdge() {
     }
 
     // Create file descriptor
-    int fd = open((this->path + GPIO_SYSFS_VALUE).c_str(), O_RDONLY | O_NONBLOCK)
+    int fd = open((this->path + GPIO_SYSFS_VALUE).c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0) {
         perror("GPIO: Failed to open file.");
         return -1;
@@ -196,7 +196,7 @@ int GPIO::waitForEdge() {
     // Wait for an edge trigger (ignoring the first one)
     int edgeCount = 0;
     while (edgeCount <= 1) {
-        int trigger = epoll_wait(epollfd, &ev, 1, -1);
+        int trigger = epoll_wait(epollfd, &event, 1, -1);
         if (trigger < 0){
             perror("GPIO: epoll_wait failed.");
             close (fd);

@@ -23,7 +23,7 @@ $(BIN_DIR)/$(TARGET): $(OBJ_LIST)
 
 $(OBJ_LIST): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(mkdir_if_necessary)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $(INCLUDES) $< -o $@
 
 .PHONY: clean
 clean:

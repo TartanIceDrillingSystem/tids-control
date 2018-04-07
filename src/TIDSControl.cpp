@@ -18,46 +18,43 @@
 #include <iostream>
 #include <unistd.h>
 
-#include <bbbkit/GPIO.h>
-#include <bbbkit/StepperMotor.h>
-
-namespace tids {
+#include <libbbbkit/GPIO.h>
+#include <libbbbkit/StepperMotor.h>
 
 int testStepperMotor() {
     std::cout << "Testing StepperMotor driver:" << std::endl;
 
     std::cout << "Initializing StepperMotor...";
-    bbbkit::GPIO gpioPLS(bbbkit::GPIO::PIN::GPIO_44);
-    bbbkit::GPIO gpioDIR(bbbkit::GPIO::PIN::GPIO_65);
-    bbbkit::GPIO gpioAWO(bbbkit::GPIO::PIN::GPIO_26);
-    bbbkit::GPIO gpioCS(bbbkit::GPIO::PIN::GPIO_45);
-    bbbkit::GPIO gpioALM(bbbkit::GPIO::PIN::GPIO_46);
-    bbbkit::GPIO gpioTIM(bbbkit::GPIO::PIN::GPIO_47);
-    StepperMotor motor(gpioPLS, gpioDIR, gpioAWO, gpioCS, gpioALM, gpioTIM,
-                       1000);
+    bbbkit::GPIO *gpioPLS = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_44, bbbkit::GPIO::DIRECTION::OUTPUT);
+    bbbkit::GPIO *gpioDIR = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_65, bbbkit::GPIO::DIRECTION::OUTPUT);
+    bbbkit::GPIO *gpioAWO = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_26, bbbkit::GPIO::DIRECTION::OUTPUT);
+    bbbkit::GPIO *gpioCS = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_45, bbbkit::GPIO::DIRECTION::OUTPUT);
+    bbbkit::GPIO *gpioALM = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_46, bbbkit::GPIO::DIRECTION::INPUT);
+    bbbkit::GPIO *gpioTIM = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_47, bbbkit::GPIO::DIRECTION::INPUT);
+    bbbkit::StepperMotor *motor = new bbbkit::StepperMotor(gpioPLS, gpioDIR, gpioAWO, gpioCS, gpioALM, gpioTIM);
     std::cout << " done!" << std::endl;
 
     // Rotate clockwise 1 revolution at 12rpm (5 seconds total)
     std::cout << "1 revolution CW @ 12rpm (5 seconds)..." << std::endl;
-    motor.setRevolutionsPerMinute(6);
-    motor.rotate(360.0f);
+    motor->setRevolutionsPerMinute(6);
+    motor->rotate(360.0f);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
     usleep(2000000);
 
     // Rotate clockwise 10 revolutions at 60rpm (10 seconds total)
     std::cout << "10 revolutions CW @ 60rpm (10 seconds)..." << std::endl;
-    motor.setRevolutionsPerMinute(60);
-    motor.rotate(360.0f * 10.0f);
+    motor->setRevolutionsPerMinute(60);
+    motor->rotate(360.0f * 10.0f);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
     usleep(2000000); 
 
     // Rotate counterclockwise 10 revolutions at 100rpm (6 seconds total)
     std::cout << "10 revolutions CCW @ 100rpm (6 seconds)..." << std::endl;
-    motor.setRevolutionsPerMinute(100);
-    motor.setDirection(StepperMotor::DIRECTION::COUNTERCLOCKWISE);
-    motor.rotate(360.0f * 10.0f);
+    motor->setRevolutionsPerMinute(100);
+    motor->setDirection(bbbkit::StepperMotor::DIRECTION::COUNTERCLOCKWISE);
+    motor->rotate(360.0f * 10.0f);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
     usleep(2000000);  
@@ -65,16 +62,24 @@ int testStepperMotor() {
     // Motor sleep for 5 seconds
 
     std::cout << "Sleeping motor for 5 seconds..." << std::endl;
-    motor.setSleeping(true);
+    motor->setIsSleeping(true);
     usleep(5000000);
 
     // Motor wake for 5 seconds
 
     std::cout << "Waking motor for 5 seconds..." << std::endl;
-    motor.setSleeping(false);
+    motor->setIsSleeping(false);
     usleep(5000000);
 
     std::cout << "StepperMotor test complete!" << std::endl;
+
+    delete motor;
+    delete gpioPLS;
+    delete gpioDIR;
+    delete gpioAWO;
+    delete gpioCS;
+    delete gpioALM;
+    delete gpioTIM;
 
     return 0;
 }
@@ -83,6 +88,4 @@ int main(int argc, char **argv) {
     testStepperMotor();
     return 0;
 }
-
-} /* namespace tids */
 

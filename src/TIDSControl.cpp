@@ -24,19 +24,21 @@
 int testStepperMotor() {
     std::cout << "Testing StepperMotor driver:" << std::endl;
 
-    std::cout << "Initializing StepperMotor...";
-    bbbkit::GPIO *gpioPLS = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_44, bbbkit::GPIO::DIRECTION::OUTPUT);
-    bbbkit::GPIO *gpioDIR = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_65, bbbkit::GPIO::DIRECTION::OUTPUT);
+    std::cout << "Initializing StepperMotor..." << std::endl;
+    bbbkit::GPIO *gpioPLS = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_67, bbbkit::GPIO::DIRECTION::OUTPUT);
+    bbbkit::GPIO *gpioDIR = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_68, bbbkit::GPIO::DIRECTION::OUTPUT);
     bbbkit::GPIO *gpioAWO = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_26, bbbkit::GPIO::DIRECTION::OUTPUT);
     bbbkit::GPIO *gpioCS = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_45, bbbkit::GPIO::DIRECTION::OUTPUT);
     bbbkit::GPIO *gpioALM = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_46, bbbkit::GPIO::DIRECTION::INPUT);
     bbbkit::GPIO *gpioTIM = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_47, bbbkit::GPIO::DIRECTION::INPUT);
     bbbkit::StepperMotor *motor = new bbbkit::StepperMotor(gpioPLS, gpioDIR, gpioAWO, gpioCS, gpioALM, gpioTIM);
-    std::cout << " done!" << std::endl;
+
+    // Parameters for Nema 23 (23HS30-2804S)
+    motor->setStepsPerRevolution(200);
 
     // Rotate clockwise 1 revolution at 12rpm (5 seconds total)
-    std::cout << "1 revolution CW @ 12rpm (5 seconds)..." << std::endl;
-    motor->setRevolutionsPerMinute(6);
+    std::cout << "1 revolution CW @ 15rpm (4 seconds)..." << std::endl;
+    motor->setRevolutionsPerMinute(15);
     motor->rotate(360.0f);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
@@ -85,7 +87,7 @@ int testStepperMotor() {
 }
 
 int main(int argc, char **argv) {
-    testStepperMotor();
+    testStepperMotor(); 
     return 0;
 }
 

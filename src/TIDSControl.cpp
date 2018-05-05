@@ -88,8 +88,22 @@ int testStepperMotor() {
     return 0;
 }
 
+int testPWM() {
+    std::cout << "Testing PWM:" << std::endl;
+
+    bbbkit::PWM *pwm = new bbbkit::PWM(bbbkit::PWM::PIN::P8_13);
+
+    pwm->setFrequency(1000000); // 1 MHz
+    pwm->setDutyCycleAsPercent(50.0f); // 50%
+
+    delete pwm;
+
+    return 0;
+}
+
 int main(int argc, char **argv) {
-    testStepperMotor(); 
+    //testStepperMotor();
+    testPWM();
     return 0;
 }
 

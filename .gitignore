@@ -1,3 +1,7 @@
+# Temporary directories
+bin/
+build/
+
 # Prerequisites
 *.d
 

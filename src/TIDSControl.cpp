@@ -35,10 +35,12 @@ int testStepperMotor() {
 
     // Parameters for Nema 23 (23HS30-2804S)
     motor->setStepsPerRevolution(200);
+    motor->setStepFactor(32);
+    motor->setDirection(bbbkit::StepperMotor::DIRECTION::CLOCKWISE);
 
     // Rotate clockwise 1 revolution at 12rpm (5 seconds total)
     std::cout << "1 revolution CW @ 15rpm (4 seconds)..." << std::endl;
-    motor->setRevolutionsPerMinute(15);
+    motor->setRevolutionsPerMinute(15.0);
     motor->rotate(360.0f);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
@@ -46,17 +48,17 @@ int testStepperMotor() {
 
     // Rotate clockwise 10 revolutions at 60rpm (10 seconds total)
     std::cout << "10 revolutions CW @ 60rpm (10 seconds)..." << std::endl;
-    motor->setRevolutionsPerMinute(60);
-    motor->rotate(360.0f * 10.0f);
+    motor->setRevolutionsPerMinute(500.0);
+    motor->rotate(360.0 * 10.0);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
     usleep(2000000); 
 
     // Rotate counterclockwise 10 revolutions at 100rpm (6 seconds total)
     std::cout << "10 revolutions CCW @ 100rpm (6 seconds)..." << std::endl;
-    motor->setRevolutionsPerMinute(100);
+    motor->setRevolutionsPerMinute(100.0);
     motor->setDirection(bbbkit::StepperMotor::DIRECTION::COUNTERCLOCKWISE);
-    motor->rotate(360.0f * 10.0f);
+    motor->rotate(360.0 * 10.0);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
     usleep(2000000);  

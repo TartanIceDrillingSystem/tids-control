@@ -1,5 +1,5 @@
 /*
-    Tartain Ice Drilling System (TIDS) for autonomous martian ice extraction.
+    Tartan Ice Drilling System (TIDS) for autonomous martian ice extraction.
     Copyright (C) 2018 Devin Gund (https://dgund.com)
 
     This program is free software: you can redistribute it and/or modify

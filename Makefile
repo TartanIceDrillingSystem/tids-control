@@ -1,6 +1,6 @@
 CC = g++
 LD = g++
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Wextra
 TARGET = TIDSControl
 
 INCLUDES += -I/usr/local/include/libbbbkit

@@ -32,7 +32,7 @@ private:
     float distancePerRevolution;
 
 public:
-    SteppedLeadscrew(StepperMotor *motor, float distancePerRevolutionMM);
+    SteppedLeadscrew(bbbkit::StepperMotor *motor, float distancePerRevolutionMM);
     virtual ~SteppedLeadscrew();
 
     // Set distance per revolution
@@ -42,7 +42,7 @@ public:
     int setDistancePerRevolution(float getDistancePerRevolutionMM);
 
     // Rotate leadscrew to translate by distance, in millimeters
-    int move(float distanceMM);
+    void move(float distanceMM);
 };
 
 } /* namespace tids */

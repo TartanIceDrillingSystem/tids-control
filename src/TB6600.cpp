@@ -26,7 +26,7 @@
 namespace tids {
 
 TB6600::TB6600(bbbkit::GPIO::PIN pinPUL, bbbkit::GPIO::PIN pinDIR, bbbkit::GPIO::PIN pinENA,
-            bbbkit::StepperMotor::DIRECTION direction=bbbkit::StepperMotor::DIRECTION::CLOCKWISE,
+            bbbkit::StepperMotor::DIRECTION direction,
             int stepsPerRevolution, float revolutionsPerMinute, int stepFactor)
             : bbbkit::StepperMotor(pinPUL, pinDIR, pinENA, direction, stepsPerRevolution, revolutionsPerMinute, stepFactor) {}
 

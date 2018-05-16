@@ -28,26 +28,26 @@
 
 namespace tids {
 
-HX711::HX711(bbbkit::GPIO::PIN pinDOUT, bbbkit::GPIO::PIN pinPD_SCK, GAIN gain=A_128, long offset=0, float scale=1.0f) {
-    this->pinDOUT = new bbbkit::GPIO(pinDOUT, bbbkit::GPIO::DIRECTION::INPUT);
-    this->pinPD_SCK = new bbbkit::GPIO(pinPD_SCK, bbbkit::GPIO::DIRECTION::OUTPUT);
+HX711::HX711(bbbkit::GPIO::PIN pinDOUT, bbbkit::GPIO::PIN pinPD_SCK, GAIN gain, long offset, float scale) {
+    this->gpioDOUT = new bbbkit::GPIO(pinDOUT, bbbkit::GPIO::DIRECTION::INPUT);
+    this->gpioPD_SCK = new bbbkit::GPIO(pinPD_SCK, bbbkit::GPIO::DIRECTION::OUTPUT);
     this->gain = gain;
     this->offset = offset;
     this->scale = scale;
 }
 
 HX711::~HX711() {
-    delete this->pinDOUT;
-    delete this->pinPD_SCK;
+    delete this->gpioDOUT;
+    delete this->gpioPD_SCK;
 }
 
 // Check if HX711 has data ready to read
 bool HX711::isReady() {
-    return this->pinDOUT->getValue() == bbbkit::GPIO::VALUE::LOW;
+    return this->gpioDOUT->getValue() == bbbkit::GPIO::VALUE::LOW;
 }
 
 // Get gain factor
-GAIN HX711::getGain() {
+HX711::GAIN HX711::getGain() {
     return this->gain;
 }
 
@@ -56,6 +56,7 @@ int HX711::setGain(GAIN gain) {
     this->gain = gain;
     // Perform a read in order to set the new gain factor
     this->readRaw();
+    return 0;
 }
 
 // Read raw data value
@@ -63,9 +64,9 @@ long HX711::readRaw() {
     uint32_t data = 0;
     for (int bitIndex = 0; bitIndex < HX711_DATA_LENGTH; bitIndex++) {
         // Read data bit by switching clock pin
-        this->pinPD_SCK->setValue(bbbkit::GPIO::VALUE::HIGH);
-        unsigned int bit = static_cast<unsigned int>(this->pinDOUT->getValue());
-        this->pinPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
+        this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::HIGH);
+        unsigned int bit = static_cast<unsigned int>(this->gpioDOUT->getValue());
+        this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
 
         // Construct 24-bit data
         data |= (bit << (HX711_DATA_LENGTH - 1 - bitIndex));
@@ -73,8 +74,8 @@ long HX711::readRaw() {
 
     // Write the gain by switching clock pin
     for (int gainIndex = 0; gainIndex < static_cast<int>(this->gain); gainIndex++) {
-        this->pinPD_SCK->setValue(bbbkit::GPIO::VALUE::HIGH);
-        this->pinPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
+        this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::HIGH);
+        this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
     }
 
     // Pad 32-bits for signed data
@@ -105,7 +106,7 @@ long HX711::readRaw(int count) {
 
 // Read weight value for the specified offset and scale (averaged over count)
 float HX711::readWeight(int count) {
-    return (this->readRaw() - this->offset) / this->getScale();
+    return (this->readRaw(count) - this->offset) / this->getScale();
 }
 
 // Get offset
@@ -116,6 +117,7 @@ long HX711::getOffset() {
 // Set offset
 int HX711::setOffset(long offset) {
     this->offset = offset;
+    return 0;
 }
 
 // Get scale
@@ -126,25 +128,26 @@ float HX711::getScale() {
 // Set scale
 int HX711::setScale(float scale) {
     this->scale = scale;
+    return 0;
 }
 
 // Zero HX711 by setting the current weight as the offset (averaged over count)
 int HX711::tare(int count) {
-    long rawAvg = readRaw(count);
-    this->setOffset(rawAvg);
+    long rawAvg = this->readRaw(count);
+    return this->setOffset(rawAvg);
 }
 
 // Power down HX711
 void HX711::powerDown() {
     // Hold clock pin high
-    this->pinPD_SCK->setValue(bbbkit::GPIO::VALUE:::LOW);
-    this->pinPD_SCK->setValue(bbbkit::GPIO::VALUE::HIGH);
+    this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
+    this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::HIGH);
 }
 
 // Wake up HX711
 void HX711::powerUp() {
     // Reset clock pin low
-    this->pinPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
+    this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
 }
 
 } /* namespace tids */

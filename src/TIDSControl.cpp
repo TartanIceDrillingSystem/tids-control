@@ -20,19 +20,14 @@
 #include <unistd.h>
 
 #include <libbbbkit/GPIO.h>
+#include <libbbbkit/PWM.h>
 #include <libbbbkit/StepperMotor.h>
 
 int testStepperMotor() {
     std::cout << "Testing StepperMotor driver:" << std::endl;
 
     std::cout << "Initializing StepperMotor..." << std::endl;
-    bbbkit::GPIO *gpioPLS = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_67, bbbkit::GPIO::DIRECTION::OUTPUT);
-    bbbkit::GPIO *gpioDIR = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_68, bbbkit::GPIO::DIRECTION::OUTPUT);
-    bbbkit::GPIO *gpioAWO = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_26, bbbkit::GPIO::DIRECTION::OUTPUT);
-    bbbkit::GPIO *gpioCS = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_45, bbbkit::GPIO::DIRECTION::OUTPUT);
-    bbbkit::GPIO *gpioALM = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_46, bbbkit::GPIO::DIRECTION::INPUT);
-    bbbkit::GPIO *gpioTIM = new bbbkit::GPIO(bbbkit::GPIO::PIN::GPIO_47, bbbkit::GPIO::DIRECTION::INPUT);
-    bbbkit::StepperMotor *motor = new bbbkit::StepperMotor(gpioPLS, gpioDIR, gpioAWO, gpioCS, gpioALM, gpioTIM);
+    bbbkit::StepperMotor *motor = new bbbkit::StepperMotor(bbbkit::GPIO::PIN::GPIO_67, bbbkit::GPIO::PIN::GPIO_68, bbbkit::GPIO::PIN::GPIO_26);
 
     // Parameters for Nema 23 (23HS30-2804S)
     motor->setStepsPerRevolution(200);
@@ -79,12 +74,6 @@ int testStepperMotor() {
     std::cout << "StepperMotor test complete!" << std::endl;
 
     delete motor;
-    delete gpioPLS;
-    delete gpioDIR;
-    delete gpioAWO;
-    delete gpioCS;
-    delete gpioALM;
-    delete gpioTIM;
 
     return 0;
 }

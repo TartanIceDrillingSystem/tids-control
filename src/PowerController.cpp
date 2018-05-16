@@ -49,7 +49,7 @@ PowerController::~PowerController() {
     delete this->gpioRelayStepperMotorZ;
 }
 
-PowerController::State PowerController::getChillerRelayState() {
+PowerController::STATE PowerController::getChillerRelayState() {
     return this->getRelayState(this->gpioRelayChiller);
 }
 
@@ -57,7 +57,7 @@ int PowerController::setChillerRelayState(PowerController::STATE state) {
     return this->setRelayState(this->gpioRelayChiller, state);
 }
 
-PowerController::State PowerController::getDrillMotorRelayState() {
+PowerController::STATE PowerController::getDrillMotorRelayState() {
     return this->getRelayState(this->gpioRelayDrillMotor);
 }
 
@@ -65,7 +65,7 @@ int PowerController::setDrillMotorRelayState(PowerController::STATE state) {
     return this->setRelayState(this->gpioRelayDrillMotor, state);
 }
 
-PowerController::State PowerController::getHeaterRelayState() {
+PowerController::STATE PowerController::getHeaterRelayState() {
     return this->getRelayState(this->gpioRelayHeater1);
 }
 
@@ -79,7 +79,7 @@ int PowerController::setHeaterRelayState(PowerController::STATE state) {
     return 0;
 }
 
-PowerController::State PowerController::getProximitySensorsRelayState() {
+PowerController::STATE PowerController::getProximitySensorsRelayState() {
     return this->getRelayState(this->gpioRelayProximitySensors);
 }
 
@@ -87,7 +87,7 @@ int PowerController::setProximitySensorsRelayState(PowerController::STATE state)
     return this->setRelayState(this->gpioRelayProximitySensors, state);
 }
 
-PowerController::State PowerController::getStepperMotorXRelayState() {
+PowerController::STATE PowerController::getStepperMotorXRelayState() {
     return this->getRelayState(this->gpioRelayStepperMotorX);
 }
 
@@ -95,7 +95,7 @@ int PowerController::setStepperMotorXRelayState(PowerController::STATE state) {
     return this->setRelayState(this->gpioRelayStepperMotorX, state);
 }
 
-PowerController::State PowerController::getStepperMotorZRelayState() {
+PowerController::STATE PowerController::getStepperMotorZRelayState() {
     return this->getRelayState(this->gpioRelayStepperMotorZ);
 }
 
@@ -125,7 +125,7 @@ int PowerController::turnOffAllRelays() {
     return 0;
 }
 
-PowerController::State PowerController::getRelayState(bbbkit::GPIO *gpioRelay) {
+PowerController::STATE PowerController::getRelayState(bbbkit::GPIO *gpioRelay) {
     // Get GPIO value
     if (gpioRelay->getValue() == bbbkit::GPIO::VALUE::HIGH) {
         return PowerController::STATE::ON;
@@ -146,6 +146,7 @@ int PowerController::setRelayState(bbbkit::GPIO *gpioRelay, PowerController::STA
         std::cout << "PowerController: Error setting relay state." << std::endl;
         return -1;
     }
+    return 0;
 }
 
 } /* namespace tids */

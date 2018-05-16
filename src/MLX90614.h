@@ -49,7 +49,7 @@ namespace tids {
 // PWM control
 #define MLX90614_PWMCTRL 0x02
 // Ambient temperature range
-#define MLX90614_TA 0x03
+#define MLX90614_TARANGE 0x03
 // Emissivity correction coefficient
 #define MLX90614_EMISSIVITY 0x04
 // Config register 1

@@ -37,7 +37,7 @@ LTS6NP::~LTS6NP() {}
 // Get sensed current, in amps (averaged over count)
 float LTS6NP::getCurrent(int count) {
     // Read ADC ratio
-    float percent = this->readRatio(count);
+    float ratio = this->readRatio(count);
     // Calculate current based on sensor min and max
     float current = ratio * (LTS6NP_CURRENT_MAX - LTS6NP_CURRENT_MIN) + LTS6NP_CURRENT_MIN;
     return current;

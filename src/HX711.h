@@ -36,7 +36,7 @@ public:
 private:
     bbbkit::GPIO *gpioDOUT;
     bbbkit::GPIO *gpioPD_SCK;
-    GAIN gain;
+    HX711::GAIN gain;
     long offset;
     float scale;
 public:
@@ -47,7 +47,7 @@ public:
     bool isReady();
 
     // Get gain factor
-    int getGain();
+    GAIN getGain();
 
     // Set new gain factor after the next read
     int setGain(GAIN gain);

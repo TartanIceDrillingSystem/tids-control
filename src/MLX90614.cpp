@@ -47,7 +47,7 @@ float MLX90614::getAmbientTemperature() {
 
 float MLX90614::getTemperature(char registerAddress) {
     // MLX90614 sends 0:LSB, 1:MSB, 2:PEC
-    char *data = this->readRegisters(registerAddress, 3);
+    unsigned char *data = this->i2c->readRegisters(registerAddress, 3);
     
     // Construct temperature data
     uint16_t rawTemperature = data[1];

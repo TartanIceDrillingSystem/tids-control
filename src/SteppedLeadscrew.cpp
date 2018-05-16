@@ -23,7 +23,7 @@
 
 namespace tids {
 
-SteppedLeadscrew::SteppedLeadscrew(StepperMotor *motor, float distancePerRevolution) {
+SteppedLeadscrew::SteppedLeadscrew(bbbkit::StepperMotor *motor, float distancePerRevolution) {
     this->motor = motor;
     this->distancePerRevolution = distancePerRevolution;
 }
@@ -31,7 +31,7 @@ SteppedLeadscrew::SteppedLeadscrew(StepperMotor *motor, float distancePerRevolut
 SteppedLeadscrew::~SteppedLeadscrew() {}
 
 // Set distance per revolution
-float SteppedLeadscrew::getDistancePerRevolution {
+float SteppedLeadscrew::getDistancePerRevolution() {
     return this->distancePerRevolution;
 }
 
@@ -42,16 +42,17 @@ int SteppedLeadscrew::setDistancePerRevolution(float distancePerRevolution) {
 }
 
 // Rotate leadscrew to translate by distance, in millimeters
-int SteppedLeadscrew::move(float distanceMM) {
+void SteppedLeadscrew::move(float distanceMM) {
     // Set rotation direction on stepper motor
     bbbkit::StepperMotor::DIRECTION rotationDirection = bbbkit::StepperMotor::DIRECTION::CLOCKWISE;
     if (distanceMM < 0) {
-        this->motor->setDirection(bbbkit::StepperMotor::DIRECTION::COUNTERCLOCKWISE);
+        rotationDirection = bbbkit::StepperMotor::DIRECTION::COUNTERCLOCKWISE;
     }
+    this->motor->setDirection(rotationDirection);
 
     float revolutions = distanceMM / this->distancePerRevolution;
     float angleDEG = revolutions * 360.0f;
-    return this->motor->rotate(angleDEG);
+    this->motor->rotate(angleDEG);
 }
 
 } /* namespace tids */

@@ -41,8 +41,8 @@ private:
     
     // Relays controlling power to proximity sensors (30V DC)
     // Divided into two relays to keep current per relay below max
-    GPIO *gpioRelayHeater1;
-    GPIO *gpioRelayHeater2;
+    bbbkit::GPIO *gpioRelayHeater1;
+    bbbkit::GPIO *gpioRelayHeater2;
 
     // Relay controlling power to proximity sensors (12V DC)
     bbbkit::GPIO *gpioRelayProximitySensors;
@@ -57,28 +57,28 @@ public:
     PowerController(bbbkit::GPIO::PIN pinRelayChiller, bbbkit::GPIO::PIN pinRelayDrillMotor, bbbkit::GPIO::PIN pinRelayHeater1, bbbkit::GPIO::PIN pinRelayHeater2, bbbkit::GPIO::PIN pinRelayProximitySensors, bbbkit::GPIO::PIN pinRelayStepperMotorX, bbbkit::GPIO::PIN pinRelayStepperMotorZ);
     virtual ~PowerController();
 
-    PowerController::State getChillerRelayState();
+    PowerController::STATE getChillerRelayState();
     int setChillerRelayState(PowerController::STATE state);
 
-    PowerController::State getDrillMotorRelayState();
+    PowerController::STATE getDrillMotorRelayState();
     int setDrillMotorRelayState(PowerController::STATE state);
 
-    PowerController::State getHeaterRelayState();
+    PowerController::STATE getHeaterRelayState();
     int setHeaterRelayState(PowerController::STATE state);
 
-    PowerController::State getProximitySensorsRelayState();
+    PowerController::STATE getProximitySensorsRelayState();
     int setProximitySensorsRelayState(PowerController::STATE state);
 
-    PowerController::State getStepperMotorXRelayState();
+    PowerController::STATE getStepperMotorXRelayState();
     int setStepperMotorXRelayState(PowerController::STATE state);
 
-    PowerController::State getStepperMotorZRelayState();
+    PowerController::STATE getStepperMotorZRelayState();
     int setStepperMotorZRelayState(PowerController::STATE state);
 
     int turnOffAllRelays();
 
 private:
-    PowerController::State getRelayState(bbbkit::GPIO *gpioRelay);
+    PowerController::STATE getRelayState(bbbkit::GPIO *gpioRelay);
     int setRelayState(bbbkit::GPIO *gpioRelay, PowerController::STATE state);
 };
 

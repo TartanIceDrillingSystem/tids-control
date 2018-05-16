@@ -33,7 +33,7 @@ ISNAILVC10::~ISNAILVC10() {}
 // Get sensed current, in amps (averaged over count)
 float ISNAILVC10::getCurrent(int count) {
     // Read ADC ratio
-    float percent = this->readRatio(count);
+    float ratio = this->readRatio(count);
     // Calculate current based on sensor min and max
     float current = ratio * (ISNAILVC10_CURRENT_MAX - ISNAILVC10_CURRENT_MIN) + ISNAILVC10_CURRENT_MIN;
     return current;

@@ -19,6 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "MMPEU.h"
+
 namespace tids {
 
     MMPEU::MMPEU(bbbkit::GPIO::PIN pinA, bbbkit::GPIO::PIN pinB, bbbkit::GPIO::PIN pinIndex) {

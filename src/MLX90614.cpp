@@ -50,13 +50,16 @@ float MLX90614::getTemperature(char registerAddress) {
     char *data = this->readRegisters(registerAddress, 3);
     
     // Construct temperature data
-    uint16_t temperature = data[1];
-    temperature = temperature << 8;
-    temperature |= data[0];
+    uint16_t rawTemperature = data[1];
+    rawTemperature = rawTemperature << 8;
+    rawTemperature |= data[0];
     
     // Delete response
     delete[] data;
-    return static_cast<float>(temperature);
+
+    // Compute temperature in Celsius
+    float temperature = 0.02 * static_cast<float>(rawTemperature) - 273.15;
+    return temperature;
 }
 
 } /* namespace tids */

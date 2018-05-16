@@ -81,7 +81,7 @@ public:
 
     // Wake up HX711
     void powerUp();
-}
+};
 
 } /* namespace tids */
 

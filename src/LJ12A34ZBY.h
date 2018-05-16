@@ -34,7 +34,7 @@ public:
     virtual ~LJ12A34ZBY();
 
     bool isTriggered();
-}
+};
 
 } /* namespace tids */
 

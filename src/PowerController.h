@@ -80,7 +80,7 @@ public:
 private:
     PowerController::State getRelayState(bbbkit::GPIO *gpioRelay);
     int setRelayState(bbbkit::GPIO *gpioRelay, PowerController::STATE state);
-}
+};
 
 } /* namespace tids */
 

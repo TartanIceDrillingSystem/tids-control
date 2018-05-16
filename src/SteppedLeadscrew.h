@@ -43,7 +43,7 @@ public:
 
     // Rotate leadscrew to translate by distance, in millimeters
     int move(float distanceMM);
-}
+};
 
 } /* namespace tids */
 

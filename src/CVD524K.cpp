@@ -21,6 +21,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "CVD524K.h"
+
 namespace tids {
 
 CVD524K::CVD524K(bbbkit::GPIO::PIN pinPLS, bbbkit::GPIO::PIN pinCW, bbbkit::GPIO::PIN pinAWO,

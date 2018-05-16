@@ -21,6 +21,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "TB6600.h"
+
 namespace tids {
 
 TB6600::TB6600(bbbkit::GPIO::PIN pinPUL, bbbkit::GPIO::PIN pinDIR, bbbkit::GPIO::PIN pinENA,

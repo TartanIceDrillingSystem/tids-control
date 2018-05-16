@@ -22,7 +22,7 @@
 #ifndef LJ12A34ZBY_H
 #define LJ12A34ZBY_H
 
-#include <libbbbkit/StepperMotor.h>
+#include <libbbbkit/GPIO.h>
 
 namespace tids {
 

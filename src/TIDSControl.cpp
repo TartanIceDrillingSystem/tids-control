@@ -21,6 +21,8 @@
 #include <iostream>
 #include <unistd.h>
 
+namespace tids {
+
 TIDSControl::TIDSControl() {
     this->powerController = new PowerController(TIDS_POWERCONTROLLER_PIN_RELAYCHILLER_GPIO,
                                                 TIDS_POWERCONTROLLER_PIN_RELAYDRILLMOTOR_GPIO,
@@ -43,7 +45,7 @@ TIDSControl::TIDSControl() {
         TIDS_DRILLLOADCELL_PIN_PD_SCK_GPIO,
         -56500.0f);
 
-    this->stepperMotorX = new CVD525K(TIDS_STEPPERMOTORX_PIN_PLS_GPIO,
+    this->stepperMotorX = new CVD524K(TIDS_STEPPERMOTORX_PIN_PLS_GPIO,
                                         TIDS_STEPPERMOTORX_PIN_DIR_GPIO,
                                         TIDS_STEPPERMOTORX_PIN_AWO_GPIO,
                                         TIDS_STEPPERMOTORX_PIN_CS_GPIO,
@@ -64,7 +66,7 @@ TIDSControl::TIDSControl() {
 
     this->axisZ = new SteppedLeadscrew(this->stepperMotorZ, 4.0);
 
-    this->headerCapMotor = new DS3218(TIDS_HEATERCAPMOTOR_PIN_PWM);
+    this->heaterCapMotor = new DS3218(TIDS_HEATERCAPMOTOR_PIN_PWM);
 
     this->heaterThermometer = new MLX90614(TIDS_HEATERTHERMOMETER_BUS_I2C);
 }
@@ -87,6 +89,7 @@ TIDSControl::~TIDSControl() {
     delete this->proximitySensorZBottom;
     delete this->axisZ;
 
+    delete this->heaterCapMotor;
     delete this->heaterThermometer;
 }
 
@@ -126,7 +129,7 @@ int TIDSControl::testAxisZ() {
 int TIDSControl::testHeater() {
     this->powerController->turnOffAllRelays();
     this->powerController->setHeaterRelayState(PowerController::STATE::ON);
-    usleep(10 * 000000);
+    usleep(10 * 1000000);
     this->powerController->setHeaterRelayState(PowerController::STATE::OFF);
     return 0;
 }
@@ -138,3 +141,6 @@ int TIDSControl::testHeaterCapMotor() {
 int TIDSControl::testHeaterThermometer() {
     return 0;
 }
+
+} /* namespace tids */
+

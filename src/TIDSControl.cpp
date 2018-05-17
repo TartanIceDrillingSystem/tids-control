@@ -16,97 +16,125 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "TIDSControl.h"
+
 #include <iostream>
 #include <unistd.h>
 
-#include <libbbbkit/GPIO.h>
-#include <libbbbkit/PWM.h>
-#include <libbbbkit/StepperMotor.h>
+TIDSControl::TIDSControl() {
+    this->powerController = new PowerController(TIDS_POWERCONTROLLER_PIN_RELAYCHILLER_GPIO,
+                                                TIDS_POWERCONTROLLER_PIN_RELAYDRILLMOTOR_GPIO,
+                                                TIDS_POWERCONTROLLER_PIN_RELAYHEATER1_GPIO,
+                                                TIDS_POWERCONTROLLER_PIN_RELAYHEATER2_GPIO,
+                                                TIDS_POWERCONTROLLER_PIN_RELAYPROXIMITYSENSORS_GPIO,
+                                                TIDS_POWERCONTROLLER_PIN_RELAYSTEPEPRMOTORX_GPIO,
+                                                TIDS_POWERCONTROLLER_PIN_RELAYSTEPPERMOTORZ_GPIO);
+    this->currentSensor = new ISNAILVC10(TIDS_CURRENTSENSOR_PIN_ADC);
 
-int testStepperMotor() {
-    std::cout << "Testing StepperMotor driver:" << std::endl;
+    this->drillMotor = new bbbkit::DCMotor(TIDS_DRILLMOTOR_PIN_PWM, 1000, 0.0);
 
-    std::cout << "Initializing StepperMotor..." << std::endl;
-    bbbkit::StepperMotor *motor = new bbbkit::StepperMotor(bbbkit::GPIO::PIN::GPIO_67, bbbkit::GPIO::PIN::GPIO_68, bbbkit::GPIO::PIN::GPIO_26);
+    this->drillEncoder = new MMPEU(TIDS_DRILLENCODER_PIN_A_GPIO,
+                                    TIDS_DRILLENCODER_PIN_B_GPIO,
+                                    TIDS_DRILLENCODER_PIN_INDEX_GPIO);
 
-    // Parameters for Nema 23 (23HS30-2804S)
-    motor->setStepsPerRevolution(200);
-    motor->setStepFactor(32);
-    motor->setDirection(bbbkit::StepperMotor::DIRECTION::CLOCKWISE);
+    this->drillCurrentSensor = new LTS6NP(TIDS_DRILLCURRENTSENSOR_PIN_ADC);
 
-    // Rotate clockwise 1 revolution at 12rpm (5 seconds total)
-    std::cout << "1 revolution CW @ 15rpm (4 seconds)..." << std::endl;
-    motor->setRevolutionsPerMinute(15.0);
-    motor->rotate(360.0f);
+    this->drillLoadCell = new HX711(TIDS_DRILLLOADCELL_PIN_DOUT_GPIO,
+        TIDS_DRILLLOADCELL_PIN_PD_SCK_GPIO,
+        -56500.0f);
 
-    std::cout << "Waiting 2 seconds..." << std::endl;
-    usleep(2000000);
+    this->stepperMotorX = new CVD525K(TIDS_STEPPERMOTORX_PIN_PLS_GPIO,
+                                        TIDS_STEPPERMOTORX_PIN_DIR_GPIO,
+                                        TIDS_STEPPERMOTORX_PIN_AWO_GPIO,
+                                        TIDS_STEPPERMOTORX_PIN_CS_GPIO,
+                                        TIDS_STEPPERMOTORX_PIN_ALM_GPIO,
+                                        TIDS_STEPPERMOTORX_PIN_TIM_GPIO);
 
-    // Rotate clockwise 10 revolutions at 60rpm (10 seconds total)
-    std::cout << "10 revolutions CW @ 60rpm (10 seconds)..." << std::endl;
-    motor->setRevolutionsPerMinute(500.0);
-    motor->rotate(360.0 * 10.0);
+    this->proximitySensorXHome = new LJ12A34ZBY(TIDS_PROXIMITYSENSORXHOME_PIN_GPIO);
 
-    std::cout << "Waiting 2 seconds..." << std::endl;
-    usleep(2000000);
+    this->axisX = new SteppedLeadscrew(this->stepperMotorX, 3.0);
 
-    // Rotate counterclockwise 10 revolutions at 100rpm (6 seconds total)
-    std::cout << "10 revolutions CCW @ 100rpm (6 seconds)..." << std::endl;
-    motor->setRevolutionsPerMinute(100.0);
-    motor->setDirection(bbbkit::StepperMotor::DIRECTION::COUNTERCLOCKWISE);
-    motor->rotate(360.0 * 10.0);
+    this->stepperMotorZ = new TB6600(TIDS_STEPPERMOTORZ_PIN_PUL_GPIO,
+                                        TIDS_STEPPERMOTORZ_PIN_DIR_GPIO,
+                                        TIDS_STEPPERMOTORZ_PIN_ENA_GPIO);
 
-    std::cout << "Waiting 2 seconds..." << std::endl;
-    usleep(2000000);
+    this->proximitySensorZHome = new LJ12A34ZBY(TIDS_PROXIMITYSENSORZHOME_PIN_GPIO);
 
-    // Motor sleep for 5 seconds
+    this->proximitySensorZBottom = new LJ12A34ZBY(TIDS_PROXIMITYSENSORZBOTTOM_PIN_GPIO);
 
-    std::cout << "Sleeping motor for 5 seconds..." << std::endl;
-    motor->setIsSleeping(true);
-    usleep(5000000);
+    this->axisZ = new SteppedLeadscrew(this->stepperMotorZ, 4.0);
 
-    // Motor wake for 5 seconds
+    this->headerCapMotor = new DS3218(TIDS_HEATERCAPMOTOR_PIN_PWM);
 
-    std::cout << "Waking motor for 5 seconds..." << std::endl;
-    motor->setIsSleeping(false);
-    usleep(5000000);
+    this->heaterThermometer = new MLX90614(TIDS_HEATERTHERMOMETER_BUS_I2C);
+}
 
-    std::cout << "StepperMotor test complete!" << std::endl;
+TIDSControl::~TIDSControl() {
+    delete this->powerController;
+    delete this->currentSensor;
 
-    delete motor;
+    delete this->drillMotor;
+    delete this->drillEncoder;
+    delete this->drillCurrentSensor;
+    delete this->drillLoadCell;
 
+    delete this->stepperMotorX;
+    delete this->proximitySensorXHome;
+    delete this->axisX;
+
+    delete this->stepperMotorZ;
+    delete this->proximitySensorZHome;
+    delete this->proximitySensorZBottom;
+    delete this->axisZ;
+
+    delete this->heaterThermometer;
+}
+
+int TIDSControl::testPowerController() {
+    this->powerController->turnOffAllRelays();
     return 0;
 }
 
-int testPWM() {
-    std::cout << "Testing PWM:" << std::endl;
-
-    bbbkit::PWM *pwm = new bbbkit::PWM(bbbkit::PWM::PIN::P8_13);
-
-    std::cout << "Setting frequency..." << std::endl;
-    pwm->setFrequency(1000000); // 1 MHz
-
-    std::cout << "Starting..." << std::endl;
-    pwm->start();
-
-    std::cout << "Running for 5 seconds @ 50%..." << std::endl;
-    pwm->setDutyCycleAsPercent(50.0f); // 50%
-    usleep(5000000);
-
-    std::cout << "Running for 5 seconds @ 75%..." << std::endl;
-    pwm->setDutyCycleAsPercent(75.0f); // 75%
-    usleep(5000000);
-
-    std::cout << "Stopping..." << std::endl;
-    pwm->stop();
-    delete pwm;
-
+int TIDSControl::testCurrentSensor() {
     return 0;
 }
 
-int main(int argc, char **argv) {
-    //testStepperMotor();
-    testPWM();
+int TIDSControl::testDrillMotor() {
     return 0;
 }
 
+int TIDSControl::testDrillMotorAndEncoder() {
+    return 0;
+}
+
+int TIDSControl::testDrillCurrentSensor() {
+    return 0;
+}
+
+int TIDSControl::testDrillLoadCell() {
+    return 0;
+}
+
+int TIDSControl::testAxisX() {
+    return 0;
+}
+
+int TIDSControl::testAxisZ() {
+    return 0;
+}
+
+int TIDSControl::testHeater() {
+    this->powerController->turnOffAllRelays();
+    this->powerController->setHeaterRelayState(PowerController::STATE::ON);
+    usleep(10 * 000000);
+    this->powerController->setHeaterRelayState(PowerController::STATE::OFF);
+    return 0;
+}
+
+int TIDSControl::testHeaterCapMotor() {
+    return 0;
+}
+
+int TIDSControl::testHeaterThermometer() {
+    return 0;
+}

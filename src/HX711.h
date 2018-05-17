@@ -40,7 +40,7 @@ private:
     long offset;
     float scale;
 public:
-    HX711(bbbkit::GPIO::PIN pinDOUT, bbbkit::GPIO::PIN pinPD_SCK, GAIN gain=A_128, long offset=0, float scale=1.0f);
+    HX711(bbbkit::GPIO::PIN pinDOUT, bbbkit::GPIO::PIN pinPD_SCK, float scale=1.0f, long offset=0, GAIN gain=A_128);
     virtual ~HX711();
 
     // Check if HX711 has data ready to read

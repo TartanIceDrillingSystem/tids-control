@@ -28,7 +28,7 @@
 
 namespace tids {
 
-HX711::HX711(bbbkit::GPIO::PIN pinDOUT, bbbkit::GPIO::PIN pinPD_SCK, GAIN gain, long offset, float scale) {
+HX711::HX711(bbbkit::GPIO::PIN pinDOUT, bbbkit::GPIO::PIN pinPD_SCK, float scale, long offset, GAIN gain) {
     this->gpioDOUT = new bbbkit::GPIO(pinDOUT, bbbkit::GPIO::DIRECTION::INPUT);
     this->gpioPD_SCK = new bbbkit::GPIO(pinPD_SCK, bbbkit::GPIO::DIRECTION::OUTPUT);
     this->gain = gain;

@@ -29,7 +29,7 @@ namespace tids {
 #define DS3218_DUTY_CYCLE_MIN_NS 500000
 #define DS3218_DUTY_CYCLE_MAX_NS 2500000
 
-DS3218::DS3218(bbbkit::PWM::PIN pin, int controlAngleDEG=270 int startAngleDEG=0) : bbbkit::ServoMotor(pin) {
+DS3218::DS3218(bbbkit::PWM::PIN pin, int controlAngleDEG, int startAngleDEG) : bbbkit::ServoMotor(pin) {
     // Set control angle
     this->controlAngleDEG = controlAngleDEG;
 
@@ -104,22 +104,22 @@ int DS3218::getMinAngle() {
 }
 
 // Convert angle to percent, where the midpoint is 50%
-float percentForAngle(int angleDEG) {
+float DS3218::percentForAngle(int angleDEG) {
     float minAngle = static_cast<float>(this->getMinAngle());
     float maxAngle = static_cast<float>(this->getMaxAngle());
     float angle = static_cast<float>(angleDEG);
 
-    percent = 100.0f * (angle - minAngle) / (maxAngle - minAngle);
+    float percent = 100.0f * (angle - minAngle) / (maxAngle - minAngle);
     return percent;
 }
 
 // Convert percent to angle, where the midpoint is 50%
-int angleForPercent(float anglePercent) {
+int DS3218::angleForPercent(float anglePercent) {
     float ratio = anglePercent / 100.0f;
     float minAngle = static_cast<float>(this->getMinAngle());
     float maxAngle = static_cast<float>(this->getMaxAngle());
 
-    float angle = anglePercent * (maxAngle - minAngle) + minAngle;
+    float angle = ratio * (maxAngle - minAngle) + minAngle;
     return static_cast<int>(angle);
 }
 

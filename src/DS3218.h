@@ -37,7 +37,7 @@ private:
     int angleDEG;
 
 public:
-    DS3218(bbbkit::PWM::PIN pin, int controlAngleDEG=270 int startAngleDEG=0);
+    DS3218(bbbkit::PWM::PIN pin, int controlAngleDEG=270, int startAngleDEG=0);
     virtual ~DS3218();
 
     // Get current angle in degrees
@@ -60,7 +60,7 @@ public:
 
     // Maximum angle through clockwise rotation
     int getMaxAngle();
-    
+
     // Maximum angle through counterclockwise rotation
     int getMinAngle();
 

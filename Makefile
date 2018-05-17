@@ -1,7 +1,7 @@
 CC = g++
 LD = g++
 CFLAGS = -g -Wall -Wextra
-TARGET = TIDSControl
+TARGET = CAPCOM
 
 INCLUDES += -I/usr/local/include/libbbbkit
 LDFLAGS += -L/usr/local/lib -lbbbkit

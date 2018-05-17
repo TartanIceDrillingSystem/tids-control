@@ -40,6 +40,9 @@ PowerController::PowerController(bbbkit::GPIO::PIN pinRelayChiller, bbbkit::GPIO
 }
 
 PowerController::~PowerController() {
+    // Ensure all relays are off
+    this->turnOffAllRelays();
+
     delete this->gpioRelayChiller;
     delete this->gpioRelayDrillMotor;
     delete this->gpioRelayHeater1;

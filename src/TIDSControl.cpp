@@ -48,7 +48,7 @@ int testStepperMotor() {
     motor->rotate(360.0 * 10.0);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
-    usleep(2000000); 
+    usleep(2000000);
 
     // Rotate counterclockwise 10 revolutions at 100rpm (6 seconds total)
     std::cout << "10 revolutions CCW @ 100rpm (6 seconds)..." << std::endl;
@@ -57,7 +57,7 @@ int testStepperMotor() {
     motor->rotate(360.0 * 10.0);
 
     std::cout << "Waiting 2 seconds..." << std::endl;
-    usleep(2000000);  
+    usleep(2000000);
 
     // Motor sleep for 5 seconds
 
@@ -83,9 +83,22 @@ int testPWM() {
 
     bbbkit::PWM *pwm = new bbbkit::PWM(bbbkit::PWM::PIN::P8_13);
 
+    std::cout << "Setting frequency..." << std::endl;
     pwm->setFrequency(1000000); // 1 MHz
-    pwm->setDutyCycleAsPercent(50.0f); // 50%
 
+    std::cout << "Starting..." << std::endl;
+    pwm->start();
+
+    std::cout << "Running for 5 seconds @ 50%..." << std::endl;
+    pwm->setDutyCycleAsPercent(50.0f); // 50%
+    usleep(5000000);
+
+    std::cout << "Running for 5 seconds @ 75%..." << std::endl;
+    pwm->setDutyCycleAsPercent(75.0f); // 75%
+    usleep(5000000);
+
+    std::cout << "Stopping..." << std::endl;
+    pwm->stop();
     delete pwm;
 
     return 0;

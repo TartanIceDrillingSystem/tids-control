@@ -28,7 +28,7 @@ namespace tids {
 
 PositioningAxis::PositioningAxis(float lengthMM, float pitchMM, bbbkit::StepperMotor *motor, LJ12A34ZBY *homeSensor, LJ12A34ZBY *endSensor) {
     // Mark position as uncalibrated
-    this->positionMM = -1;
+    this->positionMM = length + 1;
     // Set length
     this->lengthMM = lengthMM;
     // Initialize speed

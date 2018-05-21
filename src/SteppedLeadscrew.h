@@ -30,16 +30,26 @@ class SteppedLeadscrew {
 private:
     bbbkit::StepperMotor *motor;
     float distancePerRevolution;
+    float speed;
 
 public:
     SteppedLeadscrew(bbbkit::StepperMotor *motor, float distancePerRevolutionMM);
     virtual ~SteppedLeadscrew();
 
-    // Set distance per revolution
-    float getDistancePerRevolution();
+    // Get motor
+    bbbkit::StepperMotor *getMotor();
+
+    // Get speed in millimeters per second
+    float getSpeed();
+
+    // Set speed in millimeters per second
+    int setSpeed(millimetersPerSecond);
 
     // Get distance per revolution
-    int setDistancePerRevolution(float getDistancePerRevolutionMM);
+    float getDistancePerRevolution();
+
+    // Set distance per revolution
+    int setDistancePerRevolution(float distancePerRevolutionMM);
 
     // Rotate leadscrew to translate by distance, in millimeters
     void move(float distanceMM);

@@ -30,12 +30,29 @@ SteppedLeadscrew::SteppedLeadscrew(bbbkit::StepperMotor *motor, float distancePe
 
 SteppedLeadscrew::~SteppedLeadscrew() {}
 
-// Set distance per revolution
+// Get motor
+bbbkit::StepperMotor *SteppedLeadscrew::getMotor() {
+    return this->motor;
+}
+
+// Get speed in millimeters per second
+float getSpeed() {
+    return this->speed;
+}
+
+// Set speed in millimeters per second
+int setSpeed(millimetersPerSecond) {
+    float revolutionsPerSecond = millimetersPerSecond / this->distancePerRevolution;
+    float revolutionsPerMinute = revolutionsPerSecond * 60.0f;
+    return this->motor->setRevolutionsPerMinute(revolutionsPerMinute);
+}
+
+// Get distance per revolution
 float SteppedLeadscrew::getDistancePerRevolution() {
     return this->distancePerRevolution;
 }
 
-// Get distance per revolution
+// Set distance per revolution
 int SteppedLeadscrew::setDistancePerRevolution(float distancePerRevolution) {
     this->distancePerRevolution = distancePerRevolution;
     return 0;

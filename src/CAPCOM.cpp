@@ -25,9 +25,12 @@ using namespace tids;
 int main () {
     std::cout << "Tartan Ice Drilling System (TIDS) Control" << std::endl;
 
+    std::cout << "Starting." << std::endl;
     TIDSControl *tidsControl = new TIDSControl();
 
-    tidsControl->testHeater();
+    std::cout << "Testing." << std::endl;
+    tidsControl->testDrillLoadCell();
 
+    std::cout << "Stopping." << std::endl;
     delete tidsControl;
 }

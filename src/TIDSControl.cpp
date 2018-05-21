@@ -115,6 +115,12 @@ int TIDSControl::testDrillCurrentSensor() {
 }
 
 int TIDSControl::testDrillLoadCell() {
+    this->drillLoadCell->tare();
+    for (int i = 0; i < 50; i++) {
+        while (!this->drillLoadCell->isReady()) {}
+        std::cout << "Load cell weight: " << this->drillLoadCell->readRaw() << std::endl;
+        usleep(1000000);
+    }
     return 0;
 }
 

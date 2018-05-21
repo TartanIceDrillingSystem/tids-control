@@ -27,13 +27,13 @@ namespace tids {
 
 PowerController::PowerController(bbbkit::GPIO::PIN pinRelayChiller, bbbkit::GPIO::PIN pinRelayDrillMotor, bbbkit::GPIO::PIN pinRelayHeater1, bbbkit::GPIO::PIN pinRelayHeater2, bbbkit::GPIO::PIN pinRelayProximitySensors, bbbkit::GPIO::PIN pinRelayStepperMotorX, bbbkit::GPIO::PIN pinRelayStepperMotorZ) {
     // Initialize relay GPIOs
-    this->gpioRelayChiller = new bbbkit::GPIO(pinRelayChiller, bbbkit::GPIO::DIRECTION::OUTPUT);
-    this->gpioRelayDrillMotor = new bbbkit::GPIO(pinRelayDrillMotor, bbbkit::GPIO::DIRECTION::OUTPUT);
-    this->gpioRelayHeater1 = new bbbkit::GPIO(pinRelayHeater1, bbbkit::GPIO::DIRECTION::OUTPUT);
-    this->gpioRelayHeater2 = new bbbkit::GPIO(pinRelayHeater2, bbbkit::GPIO::DIRECTION::OUTPUT);
-    this->gpioRelayProximitySensors = new bbbkit::GPIO(pinRelayProximitySensors, bbbkit::GPIO::DIRECTION::OUTPUT);
-    this->gpioRelayStepperMotorX = new bbbkit::GPIO(pinRelayStepperMotorX, bbbkit::GPIO::DIRECTION::OUTPUT);
-    this->gpioRelayStepperMotorZ = new bbbkit::GPIO(pinRelayStepperMotorZ, bbbkit::GPIO::DIRECTION::OUTPUT);
+    this->gpioRelayChiller = new bbbkit::GPIO(pinRelayChiller, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelayDrillMotor = new bbbkit::GPIO(pinRelayDrillMotor, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelayHeater1 = new bbbkit::GPIO(pinRelayHeater1, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelayHeater2 = new bbbkit::GPIO(pinRelayHeater2, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelayProximitySensors = new bbbkit::GPIO(pinRelayProximitySensors, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelayStepperMotorX = new bbbkit::GPIO(pinRelayStepperMotorX, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelayStepperMotorZ = new bbbkit::GPIO(pinRelayStepperMotorZ, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
 
     // Ensure all relays are off
     this->turnOffAllRelays();

@@ -80,7 +80,7 @@ int MeltingSystem::stop() {
 // Continuously turn the heater on/off to regulate evaporation temperature
 void MeltingSystem::regulateTemperature() {
     // Run until cancellation token
-    while (!this->detectionShouldCancel) {
+    while (!this->regulateTemperatureThreadShouldCancel) {
         // Get temperature of induction chamber
         float temperature = this->thermometer->getObjectTemperature();
 

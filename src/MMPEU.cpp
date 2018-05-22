@@ -23,36 +23,48 @@
 
 namespace tids {
 
-    MMPEU::MMPEU(bbbkit::GPIO::PIN pinA, bbbkit::GPIO::PIN pinB, bbbkit::GPIO::PIN pinIndex) {
-        this->gpioA = new bbbkit::GPIO(pinA, bbbkit::GPIO::DIRECTION::INPUT);
-        this->gpioB = new bbbkit::GPIO(pinB, bbbkit::GPIO::DIRECTION::INPUT);
-        this->gpioIndex = new bbbkit::GPIO(pinIndex, bbbkit::GPIO::DIRECTION::INPUT);
-    }
+MMPEU::MMPEU(bbbkit::GPIO::PIN pinA, bbbkit::GPIO::PIN pinB, bbbkit::GPIO::PIN pinIndex) {
+    this->gpioA = new bbbkit::GPIO(pinA, bbbkit::GPIO::DIRECTION::INPUT);
+    this->gpioB = new bbbkit::GPIO(pinB, bbbkit::GPIO::DIRECTION::INPUT);
+    this->gpioIndex = new bbbkit::GPIO(pinIndex, bbbkit::GPIO::DIRECTION::INPUT);
+}
 
-    MMPEU::~MMPEU() {
-        delete this->gpioA;
-        delete this->gpioB;
-        delete this->gpioIndex;
-    }
+MMPEU::~MMPEU() {
+    delete this->gpioA;
+    delete this->gpioB;
+    delete this->gpioIndex;
+}
 
-    MMPEU::STATE MMPEU::getState() {
-        if (this->gpioA->getValue() == bbbkit::GPIO::VALUE::LOW) {
-            if (this->gpioB->getValue() == bbbkit::GPIO::VALUE::LOW) {
-                return STATE::A; // 00
-            } else {
-                return STATE::D; // 01
-            }
+MMPEU::STATE MMPEU::getState() {
+    if (this->gpioA->getValue() == bbbkit::GPIO::VALUE::LOW) {
+        if (this->gpioB->getValue() == bbbkit::GPIO::VALUE::LOW) {
+            return STATE::A; // 00
         } else {
-            if (this->gpioB->getValue() == bbbkit::GPIO::VALUE::LOW) {
-                return STATE::B; // 10
-            } else {
-                return STATE::C; // 11
-            }
+            return STATE::D; // 01
+        }
+    } else {
+        if (this->gpioB->getValue() == bbbkit::GPIO::VALUE::LOW) {
+            return STATE::B; // 10
+        } else {
+            return STATE::C; // 11
         }
     }
+}
 
-    bool MMPEU::isAtIndex() {
-        return (this->gpioIndex->getValue() == bbbkit::GPIO::VALUE::HIGH);
-    }
+bool MMPEU::isAtIndex() {
+    return (this->gpioIndex->getValue() == bbbkit::GPIO::VALUE::HIGH);
+}
+
+bbbkit::GPIO *MMPEU::getGPIOA() {
+    return this->gpioA;
+}
+
+bbbkit::GPIO *MMPEU::getGPIOB() {
+    return this->gpioB;
+}
+
+bbbkit::GPIO *MMPEU::getGPIOIndex() {
+    return this->gpioIndex;
+}
 
 } /* namespace tids */

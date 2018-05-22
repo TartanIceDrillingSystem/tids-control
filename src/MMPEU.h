@@ -47,6 +47,10 @@ public:
 
     MMPEU::STATE getState();
     bool isAtIndex();
+
+    bbbkit::GPIO *getGPIOA();
+    bbbkit::GPIO *getGPIOB();
+    bbbkit::GPIO *getGPIOIndex();
 };
 
 } /* namespace tids */

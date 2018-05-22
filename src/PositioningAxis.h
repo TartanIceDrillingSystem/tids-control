@@ -66,6 +66,12 @@ public:
 
     // Move by positionMM millimeters
     int moveBy(float positionMM);
+
+    // If this->homeSensor is active
+    bool isAtHome();
+
+    // If this->endSensor is active
+    bool isAtEnd();
 };
 
 } /* namespace tids */

@@ -72,7 +72,7 @@ int PositioningAxis::moveTo(float positionMM) {
     // Target position is smaller and in home sensor buffer zone
     if (positionMM < this->positionMM && positionMM < homeBufferPositionMM) {
         // Stop if home sensor is already triggered
-        if (this->homeSensor->isTriggered()) {
+        if (this->isAtHome()) {
             return 0;
         }
 
@@ -86,7 +86,7 @@ int PositioningAxis::moveTo(float positionMM) {
 
         // Slowly move until the position is reached or sensor is activated
         while (this->positionMM > positionMM) {
-            if (this->homeSensor->isTriggered()) {
+            if (this->isAtHome()) {
                 // Move a little extra to compensate for sensor imperfection
                 this->leadscrew->move(-SENSOR_POSITION_OVERRIDE_MM);
                 // Reset current position
@@ -104,7 +104,7 @@ int PositioningAxis::moveTo(float positionMM) {
     // Target position is larger and in end sensor buffer zone
     else if (positionMM > this->positionMM && positionMM > endBufferPositionMM) {
         // Stop if end sensor is already triggered
-        if (this->endSensor != NULL && this->endSensor->isTriggered()) {
+        if (this->isAtEnd()) {
             return 0;
         }
 
@@ -118,7 +118,7 @@ int PositioningAxis::moveTo(float positionMM) {
 
         // Slowly move until the position is reached or end sensor is activated
         while (this->positionMM < positionMM && this->positionMM < this->lengthMM) {
-            if (this->endSensor != NULL && this->endSensor->isTriggered()) {
+            if (this->isAtEnd()) {
                 // Move a little extra to compensate for sensor imperfection
                 this->leadscrew->move(SENSOR_POSITION_OVERRIDE_MM);
                 // Update current position
@@ -156,6 +156,16 @@ int PositioningAxis::moveToEnd() {
 // Move by positionMM millimeters
 int PositioningAxis::moveBy(float positionMM) {
     return this->moveTo(this->getPosition() + this->positionMM);
+}
+
+// If this->homeSensor is active
+bool PositioningAxis::isAtHome() {
+    return this->homeSensor->isTriggered();
+}
+
+// If this->endSensor is active
+bool PositioningAxis::isAtEnd() {
+    return this->endSensor && this->endSensor->isTriggered();
 }
 
 } /* namespace tids */

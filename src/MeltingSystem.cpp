@@ -52,7 +52,7 @@ int MeltingSystem::closeCap() {
 // Start heater and chiller and adjust based on thermometer
 int MeltingSystem::start() {
     // Return if the temperature regulation thread already exists
-    if (this->regulateTemperatureThreadShouldCancel) {
+    if (!this->regulateTemperatureThreadShouldCancel) {
         return -1;
     }
 

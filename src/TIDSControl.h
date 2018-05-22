@@ -23,16 +23,20 @@
 #include <libbbbkit/ServoMotor.h>
 
 #include "CVD524K.h"
+#include "DrillingSystem.h"
 #include "DS3218.h"
 #include "HX711.h"
 #include "ISNAILVC10.h"
 #include "LJ12A34ZBY.h"
 #include "LTS6NP.h"
+#include "MeltingSystem.h"
 #include "MLX90614.h"
 #include "MMPEU.h"
+#include "PositioningAxis.h"
 #include "PowerController.h"
 #include "SteppedLeadscrew.h"
 #include "TB6600.h"
+#include "TelemetrySystem.h"
 
 namespace tids {
 
@@ -42,9 +46,12 @@ namespace tids {
 #define TIDS_POWERCONTROLLER_PIN_RELAYDRILLMOTOR_GPIO bbbkit::GPIO::PIN::P8_36 // Relay 4
 #define TIDS_POWERCONTROLLER_PIN_RELAYSTEPPERMOTORZ_GPIO bbbkit::GPIO::PIN::P8_34 //Relay 5
 #define TIDS_POWERCONTROLLER_PIN_RELAYPROXIMITYSENSORS_GPIO bbbkit::GPIO::PIN::P8_32 // Relay 6
-#define TIDS_POWERCONTROLLER_PIN_RELAYSTEPEPRMOTORX_GPIO bbbkit::GPIO::PIN::P8_30 // Relay 7
+#define TIDS_POWERCONTROLLER_PIN_RELAYSTEPPERMOTORX_GPIO bbbkit::GPIO::PIN::P8_30 // Relay 7
 
 #define TIDS_CURRENTSENSOR_PIN_ADC bbbkit::ADC::PIN::P9_39
+
+#define TIDS_LOADCELL_PIN_DOUT_GPIO bbbkit::GPIO::PIN::P8_27
+#define TIDS_LOADCELL_PIN_PD_SCK_GPIO bbbkit::GPIO::PIN::P8_29
 
 #define TIDS_DRILLMOTOR_PIN_PWM bbbkit::PWM::PIN::P9_14
 
@@ -53,9 +60,6 @@ namespace tids {
 #define TIDS_DRILLENCODER_PIN_INDEX_GPIO bbbkit::GPIO::PIN::P8_9
 
 #define TIDS_DRILLCURRENTSENSOR_PIN_ADC bbbkit::ADC::PIN::P9_40
-
-#define TIDS_DRILLLOADCELL_PIN_DOUT_GPIO bbbkit::GPIO::PIN::P8_27
-#define TIDS_DRILLLOADCELL_PIN_PD_SCK_GPIO bbbkit::GPIO::PIN::P8_29
 
 #define TIDS_STEPPERMOTORX_PIN_PLS_GPIO bbbkit::GPIO::PIN::P8_31
 #define TIDS_STEPPERMOTORX_PIN_DIR_GPIO bbbkit::GPIO::PIN::P8_33
@@ -80,22 +84,26 @@ namespace tids {
 class TIDSControl {
 private:
     PowerController *powerController;
-    ISNAILVC10 *currentSensor;
 
+    ISNAILVC10 *currentSensor;
+    HX711 *loadCell;
+    TelemetrySystem *telemetrySystem;
+
+    DrillingSystem *drillingSystem;
     bbbkit::DCMotor *drillMotor;
     MMPEU *drillEncoder;
     LTS6NP *drillCurrentSensor;
-    HX711 *drillLoadCell;
 
+    PositioningAxis *xAxis;
     CVD524K *stepperMotorX;
     LJ12A34ZBY *proximitySensorXHome;
-    SteppedLeadscrew *axisX;
 
+    PositioningAxis *zaxis;
     TB6600 *stepperMotorZ;
     LJ12A34ZBY *proximitySensorZHome;
     LJ12A34ZBY *proximitySensorZBottom;
-    SteppedLeadscrew *axisZ;
 
+    MeltingSystem *meltingSystem;
     DS3218 *heaterCapMotor;
     MLX90614 *heaterThermometer;
 public:
@@ -118,10 +126,10 @@ public:
 
     int testPowerController();
     int testCurrentSensor();
+    int testLoadCell();
     int testDrillMotor();
     int testDrillMotorAndEncoder();
     int testDrillCurrentSensor();
-    int testDrillLoadCell();
     int testAxisX();
     int testAxisZ();
     int testHeater();

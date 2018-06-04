@@ -46,7 +46,7 @@ public:
 
     L298N::DIRECTION getDirection();
     int setDirection(L298N::DIRECTION direction);
-}
+};
 
 } /* namespace tids */
 

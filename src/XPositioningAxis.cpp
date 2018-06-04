@@ -16,53 +16,57 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "PositioningAxis.h"
+#include "XPositioningAxis.h"
 
 namespace tids {
 
+// Default leadscrew speed in mm/s
 #define SPEED_DEFAULT 10.0f
 
+// Sensor buffer area extending from the home location
 #define SENSOR_BUFFER_MM 30.0f
+
+// Distance to move by between home sensor checks in buffer
 #define SENSOR_BUFFER_MOVE_MM 3.0f
+
+// Additional distance to move after home sensor is triggered
 #define SENSOR_POSITION_OVERRIDE_MM 0.0f
 
-PositioningAxis::PositioningAxis(float lengthMM, float pitchMM, bbbkit::StepperMotor *motor, LJ12A34ZBY *homeSensor, LJ12A34ZBY *endSensor) {
+XPositioningAxis::XPositioningAxis(float lengthMM, float pitchMM, CVD524K *motor, LJ12A34ZBY *homeSensor) {
     // Mark position as uncalibrated
     this->positionMM = length + 1;
     // Set length
     this->lengthMM = lengthMM;
-    // Initialize speed
-    this->speed = SPEED_DEFAULT;
     // Initialize stepped leadscrew
     this->leadscrew = new SteppedLeadscrew(motor, pitchMM);
-    // Set proximity sensors
+    // Set proximity sensor
     this->homeSensor = homeSensor;
-    this->endSensor = endSensor;
+    // Set speed on leadscrew
+    this->setSpeed(SPEED_DEFAULT);
 }
 
-PositioningAxis::~PositioningAxis() {
+XPositioningAxis::~XPositioningAxis() {
     delete this->leadscrew;
 }
 
 // Get current position in millimeters
-float PositioningAxis::getPosition() {
+float XPositioningAxis::getPosition() {
     return this->positionMM;
 }
 
 // Get speed in millimeters per second
-float getSpeed() {
+float XPositioningAxis::getSpeed() {
     return this->leadscrew->getSpeed();
 }
 
 // Set speed in millimeters per second
-int setSpeed(float millimetersPerSecond) {
+int XPositioningAxis::setSpeed(float millimetersPerSecond) {
     return this->leadscrew->setSpeed(this->speed);
 }
 
 // Move to position at positionMM millimeters
-int PositioningAxis::moveTo(float positionMM) {
+int XPositioningAxis::moveTo(float positionMM) {
     float homeBufferPositionMM = SENSOR_BUFFER_MM;
-    float endBufferPositionMM = this->lengthMM - SENSOR_BUFFER_MM;
 
     // Speed must be nonzero to move
     if (this->getSpeed() <= 0.0f) {
@@ -101,39 +105,7 @@ int PositioningAxis::moveTo(float positionMM) {
         }
     }
 
-    // Target position is larger and in end sensor buffer zone
-    else if (positionMM > this->positionMM && positionMM > endBufferPositionMM) {
-        // Stop if end sensor is already triggered
-        if (this->isAtEnd()) {
-            return 0;
-        }
-
-        // Move to end sensor buffer start if necessary
-        if (this-> positionMM < endBufferPositionMM) {
-            // Move to the end buffer position
-            this->leadscrew->move(endBufferPositionMM - this->positionMM);
-            // Update current position
-            this->positionMM = endBufferPositionMM;
-        }
-
-        // Slowly move until the position is reached or end sensor is activated
-        while (this->positionMM < positionMM && this->positionMM < this->lengthMM) {
-            if (this->isAtEnd()) {
-                // Move a little extra to compensate for sensor imperfection
-                this->leadscrew->move(SENSOR_POSITION_OVERRIDE_MM);
-                // Update current position
-                this->positionMM += SENSOR_POSITION_OVERRIDE_MM;
-                return 0;
-            } else {
-                // Move by a small amount and check again
-                this->leadscrew->move(SENSOR_BUFFER_MOVE_MM);
-                // Update current position
-                this->positionMM += SENSOR_BUFFER_MOVE_MM;
-            }
-        }
-    }
-
-    // Target position does not enter a sensor buffer zone
+    // Target position does not enter sensor buffer zone
     else {
         // Move to target position
         this->leadscrew->move(positionMM - this->positionMM);
@@ -144,28 +116,18 @@ int PositioningAxis::moveTo(float positionMM) {
 }
 
 // Move to home position (position 0) based on this->homeSensor
-int PositioningAxis::moveToHome() {
+int XPositioningAxis::moveToHome() {
     return this->moveTo(0.0f);
 }
 
-// Move to end position (position this->lengthMM) based on this->endSensor
-int PositioningAxis::moveToEnd() {
-    return this->moveTo(this->lengthMM);
-}
-
 // Move by positionMM millimeters
-int PositioningAxis::moveBy(float positionMM) {
+int XPositioningAxis::moveBy(float positionMM) {
     return this->moveTo(this->getPosition() + this->positionMM);
 }
 
 // If this->homeSensor is active
-bool PositioningAxis::isAtHome() {
+bool XPositioningAxis::isAtHome() {
     return this->homeSensor->isTriggered();
-}
-
-// If this->endSensor is active
-bool PositioningAxis::isAtEnd() {
-    return this->endSensor && this->endSensor->isTriggered();
 }
 
 } /* namespace tids */

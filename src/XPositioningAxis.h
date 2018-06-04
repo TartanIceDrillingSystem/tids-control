@@ -16,17 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef POSITIONINGAXIS_H
-#define POSITIONINGAXIS_H
+#ifndef XPOSITIONINGAXIS_H
+#define XPOSITIONINGAXIS_H
 
-#include <libbbbkit/StepperMotor.h>
-
+#include "CVD524K.h"
 #include "LJ12A34ZBY.h"
 #include "SteppedLeadscrew.h"
 
 namespace tids {
 
-class PositioningAxis {
+class XPositioningAxis {
 private:
     // Length of the axis in millimeters
     float lengthMM;
@@ -40,11 +39,9 @@ private:
     // Proximity sensor marking home location (position 0)
     LJ12A34ZBY *homeSensor;
 
-    // Proximity sensor at end location (position this->lengthMM)
-    LJ12A34ZBY *endSensor;
 public:
-    PositioningAxis(float lengthMM, float pitchMM, bbbkit::StepperMotor *motor, LJ12A34ZBY *homeSensor, LJ12A34ZBY *endSensor=NULL);
-    virtual ~PositioningAxis();
+    XPositioningAxis(float lengthMM, float pitchMM, CVD524K *motor, LJ12A34ZBY *homeSensor);
+    virtual ~XPositioningAxis();
 
     // Get current position in millimeters
     float getPosition();
@@ -61,19 +58,13 @@ public:
     // Move to home position (position 0) based on this->homeSensor
     int moveToHome();
 
-    // Move to end position (position this->lengthMM) based on this->endSensor
-    int moveToEnd();
-
     // Move by positionMM millimeters
     int moveBy(float positionMM);
 
     // If this->homeSensor is active
     bool isAtHome();
-
-    // If this->endSensor is active
-    bool isAtEnd();
 };
 
 } /* namespace tids */
 
-#endif /* POSITIONINGAXIS_H */
+#endif /* XPOSITIONINGAXIS_H */

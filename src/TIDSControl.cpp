@@ -25,6 +25,8 @@
 
 namespace tids {
 
+#define WEIGHT_ON_BIT_CALIBRATION -56500.0f
+
 #define WEIGHT_ON_BIT_MIN_KG 0.5
 #define WEIGHT_ON_BIT_MAX_KG 10.0
 
@@ -32,9 +34,10 @@ namespace tids {
 #define HOLE_SEPARATION_MM 152.0
 
 #define X_AXIS_LENGTH_MM 1000.0
-#define Z_AXIS_LENGTH_MM 2000.0
+#define X_AXIS_PITCH 3.0
 
-#define Z_AXIS_MOVE_MM 3.0
+#define Z_AXIS_LENGTH_MM 2000.0
+#define Z_AXIS_PITCH 4.0
 
 TIDSControl::TIDSControl() {
     // Power
@@ -44,13 +47,13 @@ TIDSControl::TIDSControl() {
                                                 TIDS_POWERCONTROLLER_PIN_RELAYHEATER1_GPIO,
                                                 TIDS_POWERCONTROLLER_PIN_RELAYHEATER2_GPIO,
                                                 TIDS_POWERCONTROLLER_PIN_RELAYPROXIMITYSENSORS_GPIO,
-                                                TIDS_POWERCONTROLLER_PIN_RELAYSTEPPERMOTORX_GPIO,
-                                                TIDS_POWERCONTROLLER_PIN_RELAYSTEPPERMOTORZ_GPIO);
+                                                TIDS_POWERCONTROLLER_PIN_RELAYMOTORX_GPIO,
+                                                TIDS_POWERCONTROLLER_PIN_RELAYMOTORZ_GPIO);
     // Telemetry
 
     this->currentSensor = new ISNAILVC10(TIDS_CURRENTSENSOR_PIN_ADC);
 
-    this->loadCell = new HX711(TIDS_LOADCELL_PIN_DOUT_GPIO, TIDS_LOADCELL_PIN_PD_SCK_GPIO, -56500.0f);
+    this->loadCell = new HX711(TIDS_LOADCELL_PIN_DOUT_GPIO, TIDS_LOADCELL_PIN_PD_SCK_GPIO, WEIGHT_ON_BIT_CALIBRATION);
 
     this->telemetrySystem = new TelemetrySystem(this->currentSensor, this->loadCell);
 
@@ -68,28 +71,28 @@ TIDSControl::TIDSControl() {
 
     // X-axis
 
-    this->stepperMotorX = new CVD524K(TIDS_STEPPERMOTORX_PIN_PLS_GPIO,
-                                        TIDS_STEPPERMOTORX_PIN_DIR_GPIO,
-                                        TIDS_STEPPERMOTORX_PIN_AWO_GPIO,
-                                        TIDS_STEPPERMOTORX_PIN_CS_GPIO,
-                                        TIDS_STEPPERMOTORX_PIN_ALM_GPIO,
-                                        TIDS_STEPPERMOTORX_PIN_TIM_GPIO);
+    this->xAxisMotor = new CVD524K(TIDS_MOTORX_PIN_PLS_GPIO,
+                                    TIDS_MOTORX_PIN_DIR_GPIO,
+                                    TIDS_MOTORX_PIN_AWO_GPIO,
+                                    TIDS_MOTORX_PIN_CS_GPIO,
+                                    TIDS_MOTORX_PIN_ALM_GPIO,
+                                    TIDS_MOTORX_PIN_TIM_GPIO);
 
     this->proximitySensorXHome = new LJ12A34ZBY(TIDS_PROXIMITYSENSORXHOME_PIN_GPIO);
 
-    this->xAxis = new PositioningAxis(X_AXIS_LENGTH_MM, 3.0, this->stepperMotorX, this->proximitySensorXHome, NULL);
+    this->xAxis = new XPositioningAxis(X_AXIS_LENGTH_MM, X_AXIS_PITCH, this->xAxisMotor, this->proximitySensorXHome);
 
     // Z-axis
 
-    this->stepperMotorZ = new TB6600(TIDS_STEPPERMOTORZ_PIN_PUL_GPIO,
-                                        TIDS_STEPPERMOTORZ_PIN_DIR_GPIO,
-                                        TIDS_STEPPERMOTORZ_PIN_ENA_GPIO);
+    this->zAxisMotor = new L298N(TIDS_MOTORZ_PIN_ENA_PWM,
+                                    TIDS_MOTORZ_PIN_IN1_GPIO,
+                                    TIDS_MOTORZ_PIN_IN2_GPIO);
 
     this->proximitySensorZHome = new LJ12A34ZBY(TIDS_PROXIMITYSENSORZHOME_PIN_GPIO);
 
     this->proximitySensorZBottom = new LJ12A34ZBY(TIDS_PROXIMITYSENSORZBOTTOM_PIN_GPIO);
 
-    this->zAxis = new PositioningAxis(Z_AXIS_LENGTH_MM, 4.0, this->stepperMotorZ, this->proximitySensorZHome, this->proximitySensorZBottom);
+    this->zAxis = new PositioningAxis(Z_AXIS_LENGTH_MM, Z_AXIS_PITCH, this->zAxisMotor, this->proximitySensorZHome, this->proximitySensorZBottom);
 
     // Melting
 
@@ -106,12 +109,12 @@ TIDSControl::~TIDSControl() {
     delete this->heaterThermometer;
     
     delete this->zAxis;
-    delete this->stepperMotorZ;
+    delete this->zAxisMotor;
     delete this->proximitySensorZHome;
     delete this->proximitySensorZBottom;
 
     delete this->xAxis;
-    delete this->stepperMotorX;
+    delete this->xAxisMotor;
     delete this->proximitySensorXHome;
 
     delete this->drillingSystem;
@@ -140,9 +143,9 @@ int TIDSControl::run() {
         this->powerController->setStepperMotorXRelayState(PowerController::STATE::ON);
         this->powerController->setStepperMotorZRelayState(PowerController::STATE::ON);
         
-        // Move x-axis and z-axis to home
-        this->xAxis->moveToHome();
+        // Move z-axis and x-axis to home
         this->zAxis->moveToHome();
+        this->xAxis->moveToHome();
 
         // Close melting chamber cap
         this->meltingSystem->closeCap();
@@ -161,15 +164,15 @@ int TIDSControl::run() {
         while (!this->zAxis->isAtEnd() && timeout < 30) {
             // Keep weight on bit below WEIGHT_ON_BIT_MAX_KG
             if (this->telemetrySystem->getWeightOnBit() < WEIGHT_ON_BIT_MAX_KG) {
+                this->zAxis->startMovingToEnd();
                 timeout = 0;
-                zAxis->moveBy(Z_AXIS_MOVE_MM);
-            }
-            // If weight on bit is above limit, try again (with eventual timeout)
-            else {
+            } else {
+                this->zAxis->stop();
                 timeout++;
-                std::this_thread::sleep_for(std::chrono::seconds(1));
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+        this->zAxis->stop();
 
         // Stop drill
         this->drillingSystem->stop();
@@ -190,9 +193,11 @@ int TIDSControl::run() {
         this->meltingSystem->openCap();
 
         // Move z-axis down until weight on bit registers above threshold
+        this->zAxis->startMovingToEnd();
         while (this->telemetrySystem->getWeightOnBit() < WEIGHT_ON_BIT_MIN_KG) {
-            zAxis->moveBy(Z_AXIS_MOVE_MM);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+        this->zAxis->stop();
 
         // Wait for ice to enter chamber
         std::this_thread::sleep_for(std::chrono::seconds(5));

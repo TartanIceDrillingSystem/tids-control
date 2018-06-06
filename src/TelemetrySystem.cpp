@@ -19,6 +19,9 @@
 #include "TelemetrySystem.h"
 
 #include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
 
 namespace tids {
 
@@ -89,9 +92,11 @@ void TelemetrySystem::updateTelemetry() {
             this->weightOnBit = this->weightOnBitSensor->readWeight();
         }
 
+        std::time_t now_c = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
         // Print telemetry data and write to datalog
-        std::cout << std::chrono::system_clock::now() << ", " << this->weightOnBit << " kg, " << this->current << " A," << std::endl;
-        this->datalog << std::chrono::system_clock::now() << ", " << this->weightOnBit << " kg, " << this->current << " A," << std::endl;
+        std::cout << std::put_time(std::localtime(&now_c), "%F %T") << ", " << this->weightOnBit << " kg, " << this->current << " A," << std::endl;
+        this->datalog << std::put_time(std::localtime(&now_c), "%F %T") << ", " << this->weightOnBit << " kg, " << this->current << " A," << std::endl;
 
         // Repeat every 10 seconds
         std::this_thread::sleep_for(std::chrono::seconds(10));

@@ -21,7 +21,9 @@
 
 #include "HX711.h"
 
+#include <chrono>
 #include <cstdint>
+#include <thread>
 
 // Length of HX711 data to read, in bits
 #define HX711_DATA_LENGTH 24
@@ -62,11 +64,16 @@ int HX711::setGain(GAIN gain) {
 
 // Read raw data value
 long HX711::readRaw() {
+    // Wait until chip is ready
+    while (!this->isReady()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
     uint32_t data = 0;
     for (int bitIndex = 0; bitIndex < HX711_DATA_LENGTH; bitIndex++) {
         // Read data bit by switching clock pin
         this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::HIGH);
-        unsigned int bit = static_cast<unsigned int>(this->gpioDOUT->getValue());
+        uint32_t bit = static_cast<uint32_t>(this->gpioDOUT->getValue());
         this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
 
         // Construct 24-bit data
@@ -74,7 +81,8 @@ long HX711::readRaw() {
     }
 
     // Write the gain by switching clock pin
-    for (int gainIndex = 0; gainIndex < static_cast<int>(this->gain); gainIndex++) {
+    int gainWriteClockTicks = static_cast<int>(this->gain);
+    for (int gainIndex = 0; gainIndex < gainWriteClockTicks; gainIndex++) {
         this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::HIGH);
         this->gpioPD_SCK->setValue(bbbkit::GPIO::VALUE::LOW);
     }

@@ -240,9 +240,8 @@ int TIDSControl::testCurrentSensor() {
 int TIDSControl::testLoadCell() {
     this->loadCell->tare();
     for (int i = 0; i < 50; i++) {
-        //while (!this->loadCell->isReady()) {}
-        //std::cout << "Load cell weight: " << this->loadCell->readWeight() << std::endl;
-        std::cout << "Load cell raw: " << this->loadCell->readRaw() << std::endl;
+        std::cout << "Load cell weight: " << this->loadCell->readWeight() << std::endl;
+        //std::cout << "Load cell raw: " << std::hex << this->loadCell->readRaw() << std::dec << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     return 0;

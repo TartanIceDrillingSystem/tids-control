@@ -4,7 +4,7 @@ CFLAGS = -g -Wall -Wextra
 TARGET = CAPCOM
 
 INCLUDES += -I/usr/local/include/libbbbkit
-LDFLAGS += -L/usr/local/lib -lbbbkit
+LDFLAGS += -L/usr/local/lib -lbbbkit -lpthread
 
 BIN_DIR = ./bin
 BUILD_DIR = ./build

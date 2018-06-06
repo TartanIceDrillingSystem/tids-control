@@ -22,6 +22,8 @@
 
 namespace tids {
 
+#define DATALOG_FILENAME "datalog.txt"
+
 TelemetrySystem::TelemetrySystem(ISNAILVC10 *currentSensor, HX711 *weightOnBitSensor) {
     this->currentSensor = currentSensor;
     this->weightOnBitSensor = weightOnBitSensor;
@@ -43,6 +45,9 @@ int TelemetrySystem::start() {
         return -1;
     }
 
+    // Open datalog file
+    this->datalog.open(DATALOG_FILENAME, std::ofstream::out | std::ofstream::app);
+
     // Reset cancellation token
     this->telemetryThreadShouldCancel = false;
     // Start temperature regulation on new thread
@@ -55,6 +60,10 @@ int TelemetrySystem::stop() {
     // Cancel and join telemetry thread
     this->telemetryThreadShouldCancel = true;
     this->telemetryThread.join();
+
+    // Close datalog file
+    this->datalog.close();
+
     return 0;
 }
 
@@ -80,8 +89,12 @@ void TelemetrySystem::updateTelemetry() {
             this->weightOnBit = this->weightOnBitSensor->readWeight();
         }
 
-        // Repeat every .1 seconds
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        // Print telemetry data and write to datalog
+        std::cout << std::chrono::system_clock::now() << ", " << this->weightOnBit << " kg, " << this->current << " A," << std::endl;
+        this->datalog << std::chrono::system_clock::now() << ", " << this->weightOnBit << " kg, " << this->current << " A," << std::endl;
+
+        // Repeat every 10 seconds
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
 }
 

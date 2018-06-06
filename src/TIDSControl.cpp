@@ -136,6 +136,9 @@ int TIDSControl::run() {
     // Turn off all relays
     this->powerController->turnOffAllRelays();
 
+    // Start telemetry and datalogging
+    this->telemetrySystem->start();
+
     // Determine x-axis target position
     for (float targetXPosition = HOLE_DIAMETER_MM; targetXPosition < (X_AXIS_LENGTH_MM - HOLE_DIAMETER_MM); targetXPosition += HOLE_SEPARATION_MM) {
         // Turn on contact sensors, x-axis, z-axis
@@ -222,6 +225,9 @@ int TIDSControl::run() {
         // Turn off all relays
         this->powerController->turnOffAllRelays();
     }
+
+    // Stop telemetry and datalogging
+    this->telemetrySystem->stop();
 
     return 0;
 }

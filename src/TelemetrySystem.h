@@ -20,6 +20,7 @@
 #define TELEMETRYSYSTEM_H
 
 #include <atomic>
+#include <fstream>
 #include <thread>
 
 #include "HX711.h"
@@ -34,6 +35,8 @@ private:
 
     float current;
     float weightOnBit;
+
+    std::ofstream datalog;
 
     std::thread telemetryThread;
     std::atomic<bool> telemetryThreadShouldCancel;

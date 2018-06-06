@@ -47,14 +47,17 @@ private:
     // Relay controlling power to proximity sensors (12V DC)
     bbbkit::GPIO *gpioRelayProximitySensors;
 
-    // Relay controlling power to x-axis stepper motor (24V DC)
-    bbbkit::GPIO *gpioRelayStepperMotorX;
+    // Relay controlling power to x-axis motor (24V DC)
+    bbbkit::GPIO *gpioRelayMotorX;
     
-    // Relay controlling power to z-axis stepper motor (24V DC)
-    bbbkit::GPIO *gpioRelayStepperMotorZ;
+    // Relay controlling power to z-axis motor (24V DC)
+    bbbkit::GPIO *gpioRelayMotorZ;
+
+    // Relay controlling power to 24V buck convertor that supplies power to x-axis and z-axis motors
+    bbbkit::GPIO *gpioRelay24V;
     
 public:
-    PowerController(bbbkit::GPIO::PIN pinRelayChiller, bbbkit::GPIO::PIN pinRelayDrillMotor, bbbkit::GPIO::PIN pinRelayHeater1, bbbkit::GPIO::PIN pinRelayHeater2, bbbkit::GPIO::PIN pinRelayProximitySensors, bbbkit::GPIO::PIN pinRelayStepperMotorX, bbbkit::GPIO::PIN pinRelayStepperMotorZ);
+    PowerController(bbbkit::GPIO::PIN pinRelayChiller, bbbkit::GPIO::PIN pinRelayDrillMotor, bbbkit::GPIO::PIN pinRelayHeater1, bbbkit::GPIO::PIN pinRelayHeater2, bbbkit::GPIO::PIN pinRelayProximitySensors, bbbkit::GPIO::PIN pinRelayMotorX, bbbkit::GPIO::PIN pinRelayMotorZ, bbbkit::GPIO::PIN pinRelay24V);
     virtual ~PowerController();
 
     PowerController::STATE getChillerRelayState();
@@ -69,11 +72,14 @@ public:
     PowerController::STATE getProximitySensorsRelayState();
     int setProximitySensorsRelayState(PowerController::STATE state);
 
-    PowerController::STATE getStepperMotorXRelayState();
-    int setStepperMotorXRelayState(PowerController::STATE state);
+    PowerController::STATE getMotorXRelayState();
+    int setMotorXRelayState(PowerController::STATE state);
 
-    PowerController::STATE getStepperMotorZRelayState();
-    int setStepperMotorZRelayState(PowerController::STATE state);
+    PowerController::STATE getMotorZRelayState();
+    int setMotorZRelayState(PowerController::STATE state);
+
+    PowerController::STATE get24VRelayState();
+    int set24VRelayState(PowerController::STATE state);
 
     int turnOffAllRelays();
 

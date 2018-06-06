@@ -143,8 +143,9 @@ int TIDSControl::run() {
     for (float targetXPosition = HOLE_DIAMETER_MM; targetXPosition < (X_AXIS_LENGTH_MM - HOLE_DIAMETER_MM); targetXPosition += HOLE_SEPARATION_MM) {
         // Turn on contact sensors, x-axis, z-axis
         this->powerController->setProximitySensorsRelayState(PowerController::STATE::ON);
-        this->powerController->setStepperMotorXRelayState(PowerController::STATE::ON);
-        this->powerController->setStepperMotorZRelayState(PowerController::STATE::ON);
+        this->powerController->set24VRelayState(PowerController::STATE::ON);
+        this->powerController->setMotorXRelayState(PowerController::STATE::ON);
+        this->powerController->setMotorZRelayState(PowerController::STATE::ON);
         
         // Move z-axis and x-axis to home
         this->zAxis->moveToHome();
@@ -210,8 +211,9 @@ int TIDSControl::run() {
 
         // Turn off contact sensors, x-axis, z-axis
         this->powerController->setProximitySensorsRelayState(PowerController::STATE::OFF);
-        this->powerController->setStepperMotorXRelayState(PowerController::STATE::OFF);
-        this->powerController->setStepperMotorZRelayState(PowerController::STATE::OFF);
+        this->powerController->set24VRelayState(PowerController::STATE::OFF);
+        this->powerController->setMotorXRelayState(PowerController::STATE::OFF);
+        this->powerController->setMotorZRelayState(PowerController::STATE::OFF);
 
         // Turn on melting chamber
         this->meltingSystem->start();

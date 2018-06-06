@@ -25,15 +25,16 @@
 
 namespace tids {
 
-PowerController::PowerController(bbbkit::GPIO::PIN pinRelayChiller, bbbkit::GPIO::PIN pinRelayDrillMotor, bbbkit::GPIO::PIN pinRelayHeater1, bbbkit::GPIO::PIN pinRelayHeater2, bbbkit::GPIO::PIN pinRelayProximitySensors, bbbkit::GPIO::PIN pinRelayStepperMotorX, bbbkit::GPIO::PIN pinRelayStepperMotorZ) {
+PowerController::PowerController(bbbkit::GPIO::PIN pinRelayChiller, bbbkit::GPIO::PIN pinRelayDrillMotor, bbbkit::GPIO::PIN pinRelayHeater1, bbbkit::GPIO::PIN pinRelayHeater2, bbbkit::GPIO::PIN pinRelayProximitySensors, bbbkit::GPIO::PIN pinRelayMotorX, bbbkit::GPIO::PIN pinRelayMotorZ, bbbkit::GPIO::PIN pinRelay24V); {
     // Initialize relay GPIOs
     this->gpioRelayChiller = new bbbkit::GPIO(pinRelayChiller, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
     this->gpioRelayDrillMotor = new bbbkit::GPIO(pinRelayDrillMotor, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
     this->gpioRelayHeater1 = new bbbkit::GPIO(pinRelayHeater1, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
     this->gpioRelayHeater2 = new bbbkit::GPIO(pinRelayHeater2, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
     this->gpioRelayProximitySensors = new bbbkit::GPIO(pinRelayProximitySensors, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
-    this->gpioRelayStepperMotorX = new bbbkit::GPIO(pinRelayStepperMotorX, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
-    this->gpioRelayStepperMotorZ = new bbbkit::GPIO(pinRelayStepperMotorZ, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelayMotorX = new bbbkit::GPIO(pinRelayMotorX, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelayMotorZ = new bbbkit::GPIO(pinRelayMotorZ, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
+    this->gpioRelay24V = new bbbkit::GPIO(pinRelay24V, bbbkit::GPIO::DIRECTION::OUTPUT, bbbkit::GPIO::VALUE::LOW);
 
     // Ensure all relays are off
     this->turnOffAllRelays();
@@ -48,8 +49,9 @@ PowerController::~PowerController() {
     delete this->gpioRelayHeater1;
     delete this->gpioRelayHeater2;
     delete this->gpioRelayProximitySensors;
-    delete this->gpioRelayStepperMotorX;
-    delete this->gpioRelayStepperMotorZ;
+    delete this->gpioRelayMotorX;
+    delete this->gpioRelayMotorZ;
+    delete this->gpioRelay24V;
 }
 
 PowerController::STATE PowerController::getChillerRelayState() {
@@ -90,20 +92,28 @@ int PowerController::setProximitySensorsRelayState(PowerController::STATE state)
     return this->setRelayState(this->gpioRelayProximitySensors, state);
 }
 
-PowerController::STATE PowerController::getStepperMotorXRelayState() {
-    return this->getRelayState(this->gpioRelayStepperMotorX);
+PowerController::STATE PowerController::getMotorXRelayState() {
+    return this->getRelayState(this->gpioRelayMotorX);
 }
 
-int PowerController::setStepperMotorXRelayState(PowerController::STATE state) {
-    return this->setRelayState(this->gpioRelayStepperMotorX, state);
+int PowerController::setMotorXRelayState(PowerController::STATE state) {
+    return this->setRelayState(this->gpioRelayMotorX, state);
 }
 
-PowerController::STATE PowerController::getStepperMotorZRelayState() {
-    return this->getRelayState(this->gpioRelayStepperMotorZ);
+PowerController::STATE PowerController::getMotorZRelayState() {
+    return this->getRelayState(this->gpioRelayMotorZ);
 }
 
-int PowerController::setStepperMotorZRelayState(PowerController::STATE state) {
-    return this->setRelayState(this->gpioRelayStepperMotorZ, state);
+int PowerController::setMotorZRelayState(PowerController::STATE state) {
+    return this->setRelayState(this->gpioRelayMotorZ, state);
+}
+
+PowerController::STATE PowerController::get24VRelayState() {
+    return this->getRelayState(this->gpioRelay24V);
+}
+
+int PowerController::set24VRelayState(PowerController::STATE state) {
+    return this->setRelayState(this->gpioRelay24V, state);
 }
 
 int PowerController::turnOffAllRelays() {
@@ -119,10 +129,13 @@ int PowerController::turnOffAllRelays() {
     if (this->setProximitySensorsRelayState(PowerController::STATE::OFF)) {
         return -1;
     }
-    if (this->setStepperMotorXRelayState(PowerController::STATE::OFF)) {
+    if (this->setMotorXRelayState(PowerController::STATE::OFF)) {
         return -1;
     }
-    if (this->setStepperMotorZRelayState(PowerController::STATE::OFF)) {
+    if (this->setMotorZRelayState(PowerController::STATE::OFF)) {
+        return -1;
+    }
+    if (this->set24VRelayState(PowerController::STATE::OFF)) {
         return -1;
     }
     return 0;

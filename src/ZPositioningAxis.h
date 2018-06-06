@@ -42,7 +42,7 @@ public:
     virtual ~ZPositioningAxis();
 
     // Start moving to home position
-    int startMovingtoHome();
+    int startMovingToHome();
 
     // Start moving to end position
     int startMovingToEnd();

@@ -50,7 +50,7 @@ public:
     float getSpeed();
 
     // Set speed in millimeters per second
-    int setSpeed(float millimetersPerSecond)
+    int setSpeed(float millimetersPerSecond);
 
     // Move to position at positionMM millimeters
     int moveTo(float positionMM);

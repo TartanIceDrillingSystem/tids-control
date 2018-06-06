@@ -34,7 +34,7 @@ namespace tids {
 
 XPositioningAxis::XPositioningAxis(float lengthMM, float pitchMM, CVD524K *motor, LJ12A34ZBY *homeSensor) {
     // Mark position as uncalibrated
-    this->positionMM = length + 1;
+    this->positionMM = lengthMM + 1;
     // Set length
     this->lengthMM = lengthMM;
     // Initialize stepped leadscrew
@@ -61,7 +61,7 @@ float XPositioningAxis::getSpeed() {
 
 // Set speed in millimeters per second
 int XPositioningAxis::setSpeed(float millimetersPerSecond) {
-    return this->leadscrew->setSpeed(this->speed);
+    return this->leadscrew->setSpeed(millimetersPerSecond);
 }
 
 // Move to position at positionMM millimeters
@@ -113,6 +113,8 @@ int XPositioningAxis::moveTo(float positionMM) {
         this->positionMM = positionMM;
         return 0;
     }
+
+    return 0;
 }
 
 // Move to home position (position 0) based on this->homeSensor
@@ -122,7 +124,7 @@ int XPositioningAxis::moveToHome() {
 
 // Move by positionMM millimeters
 int XPositioningAxis::moveBy(float positionMM) {
-    return this->moveTo(this->getPosition() + this->positionMM);
+    return this->moveTo(this->getPosition() + positionMM);
 }
 
 // If this->homeSensor is active

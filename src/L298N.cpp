@@ -49,11 +49,11 @@ int L298N::setDirection(L298N::DIRECTION direction) {
 
     // Set direction with GPIOs
     if (this->direction == L298N::DIRECTION::CLOCKWISE){
-        this->gpioIN1->setValue(GPIO::VALUE::HIGH);
-        this->gpioIN2->setValue(GPIO::VALUE::LOW);
+        this->gpioIN1->setValue(bbbkit::GPIO::VALUE::HIGH);
+        this->gpioIN2->setValue(bbbkit::GPIO::VALUE::LOW);
     } else {
-        this->gpioIN1->setValue(GPIO::VALUE::LOW);
-        this->gpioIN2->setValue(GPIO::VALUE::HIGH);
+        this->gpioIN1->setValue(bbbkit::GPIO::VALUE::LOW);
+        this->gpioIN2->setValue(bbbkit::GPIO::VALUE::HIGH);
     }
 
     return 0;

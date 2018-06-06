@@ -31,7 +31,8 @@ namespace tids {
 ZPositioningAxis::ZPositioningAxis(float lengthMM, float pitchMM, L298N *motor, LJ12A34ZBY *homeSensor, LJ12A34ZBY *endSensor) {
     // Set length
     this->lengthMM = lengthMM;
-    // Initialize speed
+    // Set motor and initialize speed
+    this->motor = motor;
     this->motor->setSpeedPercent(MOTOR_SPEED_PERCENT);
     // Set proximity sensors
     this->homeSensor = homeSensor;
@@ -41,7 +42,7 @@ ZPositioningAxis::ZPositioningAxis(float lengthMM, float pitchMM, L298N *motor, 
 ZPositioningAxis::~ZPositioningAxis() {}
 
 // Start moving to home position
-int ZPositioningAxis::startMovingtoHome() {
+int ZPositioningAxis::startMovingToHome() {
     // Return if already at home position
     if (this->isAtHome()) {
         return -1;
@@ -80,7 +81,7 @@ int ZPositioningAxis::stop() {
 
 // Move to home position (position 0) based on this->homeSensor
 int ZPositioningAxis::moveToHome() {
-    this->startMovingtoHome();
+    this->startMovingToHome();
     // Loop until home reached (check every 10 milliseconds)
     while (!this->isAtHome()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -90,7 +91,7 @@ int ZPositioningAxis::moveToHome() {
 
 // Move to end position (position this->lengthMM) based on this->endSensor
 int ZPositioningAxis::moveToEnd() {
-    this->startMovingtoEnd();
+    this->startMovingToEnd();
     // Loop until end reached (check every 10 milliseconds)
     while (!this->isAtEnd()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));

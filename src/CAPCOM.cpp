@@ -29,7 +29,7 @@ int main () {
     TIDSControl *tidsControl = new TIDSControl();
 
     std::cout << "Testing." << std::endl;
-    tidsControl->testDrillLoadCell();
+    tidsControl->testLoadCell();
 
     std::cout << "Stopping." << std::endl;
     delete tidsControl;

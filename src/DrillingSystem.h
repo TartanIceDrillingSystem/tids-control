@@ -66,12 +66,12 @@ public:
     // Get drill torque for speed and current in Nm
     float getTorque();
 
+    // Continuously update drill speed for encoder trigger
+    void updateSpeed();
+
 private:
     // Reset drill speed and encoder trigger
     void resetSpeed();
-
-    // Continuously update drill speed for encoder trigger
-    void updateSpeed();
 
     // Continuously regulate drill speed to control torque
     void regulateSpeed();

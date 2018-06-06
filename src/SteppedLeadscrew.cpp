@@ -36,12 +36,12 @@ bbbkit::StepperMotor *SteppedLeadscrew::getMotor() {
 }
 
 // Get speed in millimeters per second
-float getSpeed() {
+float SteppedLeadscrew::getSpeed() {
     return this->speed;
 }
 
 // Set speed in millimeters per second
-int setSpeed(millimetersPerSecond) {
+int SteppedLeadscrew::setSpeed(float millimetersPerSecond) {
     float revolutionsPerSecond = millimetersPerSecond / this->distancePerRevolution;
     float revolutionsPerMinute = revolutionsPerSecond * 60.0f;
     return this->motor->setRevolutionsPerMinute(revolutionsPerMinute);

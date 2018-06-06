@@ -92,7 +92,7 @@ TIDSControl::TIDSControl() {
 
     this->proximitySensorZBottom = new LJ12A34ZBY(TIDS_PROXIMITYSENSORZBOTTOM_PIN_GPIO);
 
-    this->zAxis = new PositioningAxis(Z_AXIS_LENGTH_MM, Z_AXIS_PITCH, this->zAxisMotor, this->proximitySensorZHome, this->proximitySensorZBottom);
+    this->zAxis = new ZPositioningAxis(Z_AXIS_LENGTH_MM, Z_AXIS_PITCH, this->zAxisMotor, this->proximitySensorZHome, this->proximitySensorZBottom);
 
     // Melting
 
@@ -137,7 +137,7 @@ int TIDSControl::run() {
     this->powerController->turnOffAllRelays();
 
     // Determine x-axis target position
-    for (float targetXPosition = HOLE_DIAMETER_MM; targetXPosition < (X_AXIS_LENGTH_MM - HOLE_DIAMETER_MM); targetPosition += HOLE_SEPARATION_MM) {
+    for (float targetXPosition = HOLE_DIAMETER_MM; targetXPosition < (X_AXIS_LENGTH_MM - HOLE_DIAMETER_MM); targetXPosition += HOLE_SEPARATION_MM) {
         // Turn on contact sensors, x-axis, z-axis
         this->powerController->setProximitySensorsRelayState(PowerController::STATE::ON);
         this->powerController->setStepperMotorXRelayState(PowerController::STATE::ON);
@@ -222,6 +222,8 @@ int TIDSControl::run() {
         // Turn off all relays
         this->powerController->turnOffAllRelays();
     }
+
+    return 0;
 }
 
 // Tests
@@ -238,8 +240,9 @@ int TIDSControl::testCurrentSensor() {
 int TIDSControl::testLoadCell() {
     this->loadCell->tare();
     for (int i = 0; i < 50; i++) {
-        while (!this->loadCell->isReady()) {}
-        std::cout << "Load cell weight: " << this->loadCell->readWeight() << std::endl;
+        //while (!this->loadCell->isReady()) {}
+        //std::cout << "Load cell weight: " << this->loadCell->readWeight() << std::endl;
+        std::cout << "Load cell raw: " << this->loadCell->readRaw() << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     return 0;

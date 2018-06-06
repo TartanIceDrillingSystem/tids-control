@@ -50,8 +50,8 @@ namespace tids {
 
 #define TIDS_CURRENTSENSOR_PIN_ADC bbbkit::ADC::PIN::P9_39
 
-#define TIDS_LOADCELL_PIN_DOUT_GPIO bbbkit::GPIO::PIN::P8_27
-#define TIDS_LOADCELL_PIN_PD_SCK_GPIO bbbkit::GPIO::PIN::P8_29
+#define TIDS_LOADCELL_PIN_DOUT_GPIO bbbkit::GPIO::PIN::P9_26 //bbbkit::GPIO::PIN::P8_27
+#define TIDS_LOADCELL_PIN_PD_SCK_GPIO bbbkit::GPIO::PIN::P9_25 //bbbkit::GPIO::PIN::P8_29
 
 #define TIDS_DRILLMOTOR_PIN_PWM bbbkit::PWM::PIN::P9_14
 
@@ -98,7 +98,7 @@ private:
     CVD524K *xAxisMotor;
     LJ12A34ZBY *proximitySensorXHome;
 
-    ZPositioningAxis *zaxis;
+    ZPositioningAxis *zAxis;
     L298N *zAxisMotor;
     LJ12A34ZBY *proximitySensorZHome;
     LJ12A34ZBY *proximitySensorZBottom;
@@ -110,7 +110,7 @@ public:
     TIDSControl();
     virtual ~TIDSControl();
 
-    void run();
+    int run();
 
     float getCurrent();
 

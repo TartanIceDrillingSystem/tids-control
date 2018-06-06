@@ -43,7 +43,7 @@ public:
     float getSpeed();
 
     // Set speed in millimeters per second
-    int setSpeed(millimetersPerSecond);
+    int setSpeed(float millimetersPerSecond);
 
     // Get distance per revolution
     float getDistancePerRevolution();

@@ -26,8 +26,8 @@ TelemetrySystem::TelemetrySystem(ISNAILVC10 *currentSensor, HX711 *weightOnBitSe
     this->currentSensor = currentSensor;
     this->weightOnBitSensor = weightOnBitSensor;
     
-    float current = -1;
-    float weightOnBit = -1;
+    this->current = -1;
+    this->weightOnBit = -1;
 
     this->telemetryThreadShouldCancel = true;
 }
@@ -47,6 +47,7 @@ int TelemetrySystem::start() {
     this->telemetryThreadShouldCancel = false;
     // Start temperature regulation on new thread
     this->telemetryThread = std::thread(&TelemetrySystem::updateTelemetry, this);
+    return 0;
 }
 
 // Stop updating telemetry
@@ -54,6 +55,7 @@ int TelemetrySystem::stop() {
     // Cancel and join telemetry thread
     this->telemetryThreadShouldCancel = true;
     this->telemetryThread.join();
+    return 0;
 }
 
 // Get current in amps
@@ -75,7 +77,7 @@ void TelemetrySystem::updateTelemetry() {
 
         // Get weight on bit
         if (this->weightOnBitSensor->isReady()) {
-            this->weightOnBit = this->weightOnBitSensor->getWeight();
+            this->weightOnBit = this->weightOnBitSensor->readWeight();
         }
 
         // Repeat every .1 seconds

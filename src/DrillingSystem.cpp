@@ -58,8 +58,8 @@ int DrillingSystem::start() {
     }
 
     // Start encoder trigger thread to calculate speed
-    this->encoder->getGPIOA()->setEdgeType(GPIO::EDGE::RISING);
-    this->encoder->getGPIOA()->waitForEdgeThread(&DrillingSystem::updateSpeed);
+    this->encoder->getGPIOA()->setEdgeType(bbbkit::GPIO::EDGE::RISING);
+    this->encoder->getGPIOA()->waitForEdgeThread((bbbkit::CallbackFunction_t)&DrillingSystem::updateSpeed);
 
     // Start drill at minimum speed
     this->motor->setSpeedPercent(SPEED_MIN_PERCENT);
@@ -69,6 +69,8 @@ int DrillingSystem::start() {
     this->regulateSpeedThreadShouldCancel = false;
     // Start speed regulation on new thread
     this->regulateSpeedThread = std::thread(&DrillingSystem::regulateSpeed, this);
+
+    return 0;
 }
 
 // Stop drill
@@ -85,6 +87,8 @@ int DrillingSystem::stop() {
 
     // Reset encoder trigger time and speed
     this->resetSpeed();
+
+    return 0;
 }
 
 // Rotate drill until index location on encoder
@@ -98,10 +102,12 @@ int DrillingSystem::rotateToIndex() {
 
     // Stop drill
     this->motor->stop();
+
+    return 0;
 }
 
 // Get drill rotation speed from encoder in RPM
-int DrillingSystem::getSpeed() {
+float DrillingSystem::getSpeed() {
     return this->speedRPM;
 }
 
@@ -126,7 +132,7 @@ float DrillingSystem::getTorque() {
 
 // Reset drill speed and encoder trigger
 void DrillingSystem::resetSpeed() {
-    this->lastEncoderTriggerTimeS = std::chrono::high_resolution_clock::time_point.min();
+    this->lastEncoderTriggerTimeS = std::chrono::high_resolution_clock::time_point::min();
     this->speedRPM = 0.0f;
 }
 
@@ -135,10 +141,12 @@ void DrillingSystem::updateSpeed() {
     std::chrono::high_resolution_clock::time_point encoderTriggerTimeS = std::chrono::high_resolution_clock::now();
 
     // Update speed if there is a recorded last trigger time
-    bool firstSpeedUpdate = (this->lastEncoderTriggerTimeS == std::chrono::high_resolution_clock::time_point.min());
+    bool firstSpeedUpdate = (this->lastEncoderTriggerTimeS == std::chrono::high_resolution_clock::time_point::min());
     if (!firstSpeedUpdate) {
         // Calculate time difference between pulses
-        double pulseTimeDifferenceS = std::chrono::duration_cast< std::chrono::duration<double> >(encoderTriggerTimeS - lastEncoderTriggerTimeS);
+        //double pulseTimeDifferenceS = std::chrono::duration_cast<std::chrono::duration::seconds>(encoderTriggerTimeS - lastEncoderTriggerTimeS);
+	std::chrono::duration<double> difference = encoderTriggerTimeS - lastEncoderTriggerTimeS;
+	double pulseTimeDifferenceS = difference.count();
         // Calculate seconds per revolution based on encoder pulses per revolution
         double secondsPerRevolution = pulseTimeDifferenceS * ENCODER_PULSES_PER_REVOLUTION;
         // Convert to revolutions per minute

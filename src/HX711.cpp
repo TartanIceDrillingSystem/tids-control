@@ -34,7 +34,7 @@ HX711::HX711(bbbkit::GPIO::PIN pinDOUT, bbbkit::GPIO::PIN pinPD_SCK, float scale
 
     this->setScale(scale);
     this->setOffset(offset);
-    this->setGain(gain;)
+    this->setGain(gain);
 }
 
 HX711::~HX711() {

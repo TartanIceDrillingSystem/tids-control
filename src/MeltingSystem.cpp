@@ -41,12 +41,12 @@ MeltingSystem::~MeltingSystem() {
 
 // Open melting chamber cap
 int MeltingSystem::openCap() {
-    this->capMotor->setAngle(CAP_MOTOR_ANGLE_OPEN);
+    return this->capMotor->setAngle(CAP_MOTOR_ANGLE_OPEN);
 }
 
 // Close melting chamber cap
 int MeltingSystem::closeCap() {
-    this->capMotor->setAngle(CAP_MOTOR_ANGLE_CLOSED);
+    return this->capMotor->setAngle(CAP_MOTOR_ANGLE_CLOSED);
 }
 
 // Start heater and chiller and adjust based on thermometer
@@ -56,14 +56,18 @@ int MeltingSystem::start() {
         return -1;
     }
 
-    // Turn on heater and chiller
+    // Turn on chiller and wait 10 seconds
     this->powerController->setChillerRelayState(PowerController::STATE::ON);
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    
+    // Turn on heater
     this->powerController->setHeaterRelayState(PowerController::STATE::ON);
 
     // Reset cancellation token
     this->regulateTemperatureThreadShouldCancel = false;
     // Start temperature regulation on new thread
     this->regulateTemperatureThread = std::thread(&MeltingSystem::regulateTemperature, this);
+    return 0;
 }
 
 // Stop heater and chiller
@@ -75,6 +79,7 @@ int MeltingSystem::stop() {
     // Turn off heater and chiller
     this->powerController->setChillerRelayState(PowerController::STATE::OFF);
     this->powerController->setHeaterRelayState(PowerController::STATE::OFF);
+    return 0;
 }
 
 // Continuously turn the heater on/off to regulate evaporation temperature
